@@ -56,8 +56,7 @@ public class ClientHandler extends Thread{
 			// TODO Auto-generated catch block
 			System.out.println("GRIJESKA");
 			
-//			e.printStackTrace();
-			System.out.println("Klijent se nasilno iskljucio");
+			e.printStackTrace();
 		}
 		
 		

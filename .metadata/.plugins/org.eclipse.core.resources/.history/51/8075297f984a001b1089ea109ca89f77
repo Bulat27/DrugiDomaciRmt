@@ -96,8 +96,6 @@ public class Klijent {
 
 	private static void prijava() throws IOException {// vidi da li je ovo dovoljno dobra obrada Exceptiona
 		String zaSlanje;
-		boolean kraj=false;
-		while(!kraj) {
 		System.out.println("Unesite Vas username:");
 		zaSlanje = tastatura.readLine();
 		izlazniTok.println(zaSlanje);
@@ -113,15 +111,6 @@ public class Klijent {
 		System.out.println("Unesite Vas email:");
 		zaSlanje = tastatura.readLine();
 		izlazniTok.println(zaSlanje);
-		
-		String odgovor = ulazniTok.readLine();
-		if(odgovor.equals("validan")) {
-			System.out.println("Uspesno ste se registrovali");
-			kraj=true;
-		}else {
-			System.out.println("Uneti username je vec zauzet, molimo vas da ponovo unesete podatke");
-		}
-		}
 	}
 	
 	

@@ -54,10 +54,7 @@ public class ClientHandler extends Thread{
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("GRIJESKA");
-			
-//			e.printStackTrace();
-			System.out.println("Klijent se nasilno iskljucio");
+			e.printStackTrace();
 		}
 		
 		
@@ -89,37 +86,13 @@ public class ClientHandler extends Thread{
 	}
 
 	private void prijava() throws IOException {
-		boolean kraj = false;
-		while(!kraj) {
 		String username=ulazniTok.readLine();
 		String lozinka=ulazniTok.readLine();
 		String imeIPrezime=ulazniTok.readLine();
 		String pol=ulazniTok.readLine();
 		String email=ulazniTok.readLine();
-		
 		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email);
-		if(Server.listaRegistrovanih.contains(klijent)) {
-			izlazniTok.println("zauzet");
-			klijent=null;
-		}else {
-			izlazniTok.println("validan");
-			dodajKlijenta();
-			kraj=true;
-		}
-		
-//		for (KlijentPodaci trenutni : Server.listaRegistrovanih) {
-//			if(trenutni.username.equals(username)) {
-//				izlazniTok.println("zauzet");
-//				
-//			}else {
-//				izlazniTok.println("validan");
-//				klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email);
-//				dodajKlijenta();
-//				kraj =true;
-//			}
-//		}
-		
-		}
+		dodajKlijenta();
 		
 	}
 	//ovo treba da doda i da SERIJALIZUJE

@@ -24,7 +24,7 @@ public class KlijentPodaci {
 			return false;
 		}
 		KlijentPodaci k = (KlijentPodaci) (obj);
-		return username.equals(k.username);// Glupo je razlikovati ih po lozinci, nesigurno je, a po ime i prezime moze da bude isto, takod a cemo za sad po username-u
+		return username.equals(k.username);
 	}
 	
 	
