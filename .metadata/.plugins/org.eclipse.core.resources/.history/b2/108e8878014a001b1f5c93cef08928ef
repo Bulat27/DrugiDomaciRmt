@@ -1,0 +1,20 @@
+package glavniPaket;
+
+import java.io.BufferedReader;
+import java.io.PrintStream;
+import java.net.Socket;
+
+public class Klijent {
+	
+    static Socket soketZaKomunikaciju=null;
+	static BufferedReader ulazniTok = null;
+	static PrintStream izlazniTok = null;
+	static BufferedReader tastatura = null;
+	
+	
+	public static void main(String[] args) {
+		soketZaKomunikaciju = new Socket("localhost", 9027);
+	}
+	
+	
+}

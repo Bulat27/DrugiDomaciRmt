@@ -1,0 +1,39 @@
+package glavniPaket;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+public class Klijent {
+	
+    static Socket soketZaKomunikaciju=null;
+	static BufferedReader ulazniTok = null;
+	static PrintStream izlazniTok = null;
+	static BufferedReader tastatura = null;
+	
+	
+	public static void main(String[] args) {
+		try {
+			soketZaKomunikaciju = new Socket("localhost", 9027);
+			
+			ulazniTok= new BufferedReader(new InputStreamReader(soketZaKomunikaciju.getInputStream()));
+			izlazniTok = new PrintStream(soketZaKomunikaciju.getOutputStream());
+			
+			tastatura = new BufferedReader(new InputStreamReader(System.in));
+			
+			
+			
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+}

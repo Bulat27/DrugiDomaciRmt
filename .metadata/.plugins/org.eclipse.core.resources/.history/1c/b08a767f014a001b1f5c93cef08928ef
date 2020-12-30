@@ -1,0 +1,19 @@
+package glavni;
+
+import java.io.BufferedReader;
+import java.io.PrintStream;
+import java.net.Socket;
+
+public class ClientHandler extends Thread{
+	
+	
+	public ClientHandler(Socket soketZaKomunikaciju) {
+		super();
+		this.soketZaKomunikaciju = soketZaKomunikaciju;
+	}
+	
+	PrintStream clientOutput = null;
+	Socket soketZaKomunikaciju = null;
+	BufferedReader clientInput = null;
+	
+}

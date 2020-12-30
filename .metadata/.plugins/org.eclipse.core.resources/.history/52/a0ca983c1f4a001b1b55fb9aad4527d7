@@ -1,0 +1,65 @@
+package glavni;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.Socket;
+
+public class ClientHandler extends Thread{
+	
+	
+	public ClientHandler(Socket soketZaKomunikaciju) {
+		super();
+		this.soketZaKomunikaciju = soketZaKomunikaciju;
+	}
+	
+	PrintStream izlazniTok = null;
+	Socket soketZaKomunikaciju = null;
+	BufferedReader ulazniTok = null;
+//	String username;
+//	String lozinka;
+//	String imeIPrezime;
+//	String pol;
+//	String email;
+	KlijentPodaci klijent=null;
+	
+	@Override
+	public void run() {
+		
+		try {
+			ulazniTok = new BufferedReader(new InputStreamReader(soketZaKomunikaciju.getInputStream()));
+			izlazniTok = new PrintStream(soketZaKomunikaciju.getOutputStream());
+			// logovanje ili registracija
+			String prvaOpcija=ulazniTok.readLine();
+			
+			switch (prvaOpcija) {
+			case "1":
+				prijava();
+				break;
+			case "2":
+				logovanje();
+				break;
+			case "3":
+				soketZaKomunikaciju.close();
+				return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
+				break;
+				
+			
+			}
+			
+			
+			
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+	
+}
