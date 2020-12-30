@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.GregorianCalendar;
 
 public class Klijent {
 	
@@ -57,7 +58,42 @@ public class Klijent {
 			
 			}
 			
-			System.out.println(ulazniTok.readLine());
+//			System.out.println(ulazniTok.readLine());
+			System.out.println("Ulogovani ste na svoj nalog");
+			//ovde ce biti vise opcija
+			kraj =false;
+			// vidi da li ce ovde biti beskonacni while pa gde ce da ga vraca, koje sve opcije ima i to
+			while(!kraj) {
+			System.out.println("Izaberite neku od sledecih opcija:");
+			System.out.println("1-Test za samoprocenu");
+			System.out.println("2-Podaci o poslednjoj prijavi");
+			System.out.println("3-Prekid komunikacije");
+			String drugaOpcija=tastatura.readLine();
+			switch (drugaOpcija) {
+			case "1":
+				izlazniTok.println(drugaOpcija);
+				testSamoprocene();
+				kraj=true;
+				break;
+			case "2":
+				//MORA PRINTLN, NE MOZE SAMO PRINT, NE POPIJE GA LEPO, VIDI TO!
+				izlazniTok.println(drugaOpcija);
+				pregledPoslednjegPrijave();
+				kraj=true;
+				break;
+			case "3":
+			izlazniTok.println(drugaOpcija);
+			System.out.println("Dovidjenja");
+			soketZaKomunikaciju.close();
+			return;
+			// vidi da li ovo skroz prekida izvrsavanje
+			default:
+				System.out.println("Molimo Vas izaberite validnu opciju");
+				break;// mislim da ovaj break nije ni potreban
+			}
+			}
+			
+			
 			
 			
 		} catch (UnknownHostException e) {
@@ -67,6 +103,38 @@ public class Klijent {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+
+	private static void pregledPoslednjegPrijave() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private static void testSamoprocene() throws IOException {// vidi za exception
+		int brojac=0;// ovde cu da prebrojim, nema potrebe da server sve obradjuje, njega samo zanima dal ih vise od dva ili ne
+		//ovaj deo moze pametnije, ne pada mi nista sada na pamet 
+		GregorianCalendar datumTesta = new GregorianCalendar();
+		String[] nizPitanja = {"Da li ste putovali van Srbije u okviru 14 dana pre pocetka simptoma?","Da li ste bili u kontaku sa zarazenim osobama?","Da li imate povisenu temperaturu?","Da li imate kasalj?","Da li se osecate malaksalo?","Da li gubite culo mirisa?","Da li gubite culo ukusa?"};
+		for (String pitanje : nizPitanja) {
+			if(pitanjeOdgovor(pitanje))brojac++;
+		}
+		izlazniTok.println(datumTesta);// ovo server prvo prima svakako
+		if(brojac<2) {
+			System.out.println("Nema potrebe da radite dalje testove");
+			izlazniTok.println("nemoj dalje");
+		}else {
+			izlazniTok.println("jos testova");
+			
+		}
+		
+	}
+	private static boolean pitanjeOdgovor(String pitanje) throws IOException {//valjda ne pravi prob sto je static
+		System.out.println(pitanje);
+		String odgovor =tastatura.readLine();
+		return odgovor.equalsIgnoreCase("da");
+		
 	}
 
 

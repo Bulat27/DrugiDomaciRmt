@@ -1,10 +1,14 @@
 package glavni;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.GregorianCalendar;
 
 public class ClientHandler extends Thread{
 	
@@ -49,8 +53,20 @@ public class ClientHandler extends Thread{
 			}
 			
 			
-			izlazniTok.println("Prosao si");
-			
+//			izlazniTok.println("Prosao si");
+			String drugaOpcija =ulazniTok.readLine();
+			switch (drugaOpcija) {
+			case "1":
+				testSamoprocene();
+				break;
+			case "2":
+				pregledPoslednjePrijave();
+				break;
+			case "3":
+				soketZaKomunikaciju.close();
+				return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
+				//break;
+			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -61,6 +77,22 @@ public class ClientHandler extends Thread{
 		}
 		
 		
+		
+	}
+
+	private void pregledPoslednjePrijave() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void testSamoprocene() throws IOException {
+//		GregorianCalendar datumSamoProcene = ulazniTok.read
+		String dalje = ulazniTok.readLine();
+		if(dalje.equals("jos testova")) {
+			
+		}else {
+			//videcemo sta cemo ovde
+		}
 		
 	}
 
@@ -98,6 +130,7 @@ public class ClientHandler extends Thread{
 		String email=ulazniTok.readLine();
 		
 		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email);
+//		klijent=new KlijentPodaci(username, lozinka, imeIPrezime, pol, email, testSamoprocene, brziTest)
 		if(Server.listaRegistrovanih.contains(klijent)) {
 			izlazniTok.println("zauzet");
 			klijent=null;
@@ -122,11 +155,21 @@ public class ClientHandler extends Thread{
 		}
 		
 	}
-	//ovo treba da doda i da SERIJALIZUJE
-	private void dodajKlijenta() {
+	//ovo treba da doda i da SERIJALIZUJE (vidi da li je bitno dal je public ili private)
+	public void dodajKlijenta() {
 		Server.listaRegistrovanih.add(klijent);
 		//serijalizacija 
-		
+		try(FileOutputStream fOut = new FileOutputStream("baza.dat");
+			BufferedOutputStream bOut = new BufferedOutputStream(fOut);
+			ObjectOutputStream out = new ObjectOutputStream(bOut);	
+				){
+			for (int i = 0; i < Server.listaRegistrovanih.size(); i++) {
+				out.writeObject(Server.listaRegistrovanih.get(i));
+			}
+			
+		}catch (Exception e) {
+			System.out.println("Greska prilikom serijalizacije"+ e.getMessage());
+		}
 		
 	}
 	

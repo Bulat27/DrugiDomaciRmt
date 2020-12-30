@@ -1,13 +1,17 @@
 package glavni;
 
+import java.io.BufferedInputStream;
+import java.io.EOFException;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
 
 public class Server {
 	
-	public static LinkedList<KlijentPodaci> listaRegistrovanih = new LinkedList<>();//mora cu svaki put da je ucitivam iz tog fajla, ali necu ovu listu ipak, nego onu listu sa Klijent Podaci
+	public static LinkedList<KlijentPodaci> listaRegistrovanih=new LinkedList<>();//mora cu svaki put da je ucitivam iz tog fajla, ali necu ovu listu ipak, nego onu listu sa Klijent Podaci
 	// Korisnici nezavisno rade, tako da mi nije bitno koji su trenutno ulogovani
 	
 	public static void main(String[] args) {
@@ -47,8 +51,25 @@ public class Server {
 	
 	
 	
-	private static void ucitajListuIzFajla() {
-		// TODO Auto-generated method stub
+	private static void ucitajListuIzFajla() {// vidi da li radi kada su klijenti jedan za drugim!!!!!, trebalo bi da da
+		try(FileInputStream fIn= new FileInputStream("baza.dat");
+			BufferedInputStream bIn = new BufferedInputStream(fIn);
+			ObjectInputStream in =new ObjectInputStream(bIn);	
+				){
+			//listaRegistrovanih.clear(); , nisam siguran da li mi treba ovo, svj nece nista ostati unutra jer se ovo radi samo pri pokretanju servera
+			try {
+				while(true) {
+					KlijentPodaci k = (KlijentPodaci) (in.readObject());
+					listaRegistrovanih.add(k);
+				}
+				
+			} catch (EOFException e) {
+				// TODO: handle exception
+			}
+			
+		}catch(Exception e) {
+			
+		}
 		
 	}
 	
