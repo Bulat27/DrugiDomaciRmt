@@ -1,8 +1,9 @@
 package glavni;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
-public class TestSamoprocene {
+public class TestSamoprocene implements Serializable{
 	private String status;
 	private GregorianCalendar datum;
 	

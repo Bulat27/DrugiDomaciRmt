@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
@@ -17,7 +18,8 @@ public class ClientHandler extends Thread{
 		super();
 		this.soketZaKomunikaciju = soketZaKomunikaciju;
 	}
-	
+	ObjectOutputStream izlazniZaObjekte=null;
+	ObjectInputStream ulazniZaObjekte=null;
 	PrintStream izlazniTok = null;
 	Socket soketZaKomunikaciju = null;
 	BufferedReader ulazniTok = null;
@@ -32,6 +34,8 @@ public class ClientHandler extends Thread{
 	public void run() {
 		
 		try {
+			izlazniZaObjekte= new ObjectOutputStream(soketZaKomunikaciju.getOutputStream());
+			ulazniZaObjekte = new ObjectInputStream(soketZaKomunikaciju.getInputStream());
 			ulazniTok = new BufferedReader(new InputStreamReader(soketZaKomunikaciju.getInputStream()));
 			izlazniTok = new PrintStream(soketZaKomunikaciju.getOutputStream());
 			// logovanje ili registracija
@@ -60,7 +64,7 @@ public class ClientHandler extends Thread{
 				testSamoprocene();
 				break;
 			case "2":
-				pregledPoslednjePrijave();
+				pregledPoslednjeSamoprocene();
 				break;
 			case "3":
 				soketZaKomunikaciju.close();
@@ -72,7 +76,7 @@ public class ClientHandler extends Thread{
 			// TODO Auto-generated catch block
 			System.out.println("GRIJESKA");
 			
-//			e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("Klijent se nasilno iskljucio");
 		}
 		
@@ -80,19 +84,82 @@ public class ClientHandler extends Thread{
 		
 	}
 
-	private void pregledPoslednjePrijave() {
-		// TODO Auto-generated method stub
+	private void pregledPoslednjeSamoprocene() throws IOException {
+		if(klijent.testSamoprocene!=null) {
+		izlazniZaObjekte.writeObject(klijent.testSamoprocene.getDatum());
+		izlazniTok.println(klijent.testSamoprocene.getStatus());
+		}else {
+			//trebalo bi da mu posaljem nullove da bi on tamo obraido greksu
+		}
 		
 	}
 
 	private void testSamoprocene() throws IOException {
-//		GregorianCalendar datumSamoProcene = ulazniTok.read
+		GregorianCalendar datumSamoProcene=null;
+		try {
+			 datumSamoProcene = (GregorianCalendar) ulazniZaObjekte.readObject();
+		} catch (ClassNotFoundException e) {
+			System.out.println("PROBLEM SAM CITANJEM OBJEKTA");
+			e.printStackTrace();
+		} 
+		if(klijent.testSamoprocene==null)klijent.testSamoprocene = new TestSamoprocene(null, null);
+		klijent.testSamoprocene.setDatum(datumSamoProcene);
+//		if(datumSamoProcene!=null) {
+//			System.out.println(datumSamoProcene.getTime());
+//		}
+		
 		String dalje = ulazniTok.readLine();
 		if(dalje.equals("jos testova")) {
+			klijent.testSamoprocene.setStatus("dalje testiranje");
+			serijalizuj();// mora posle svake promene da se radi!
+			String trecaOpcija =ulazniTok.readLine();
+			switch (trecaOpcija) {
+			case "1":
+				brziTest();
+				break;
+			case "2":
+				PCRtest();
+				break;
+			case "3":
+				soketZaKomunikaciju.close();
+				return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
+				//break;
+			case "4":
+				//PCR i brzi, videcu kako cu to
+				break;
+			}
 			
 		}else {
+			klijent.testSamoprocene.setStatus("pod nadzorom");
+			serijalizuj();
 			//videcemo sta cemo ovde
 		}
+		
+	}
+
+	private void PCRtest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void brziTest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void serijalizuj() {
+		try(FileOutputStream fOut = new FileOutputStream("baza.dat");
+				BufferedOutputStream bOut = new BufferedOutputStream(fOut);
+				ObjectOutputStream out = new ObjectOutputStream(bOut);	
+					){
+				for (int i = 0; i < Server.listaRegistrovanih.size(); i++) {
+					out.writeObject(Server.listaRegistrovanih.get(i));
+				}
+				
+			}catch (Exception e) {
+				System.out.println("Greska prilikom serijalizacije"+ e.getMessage());
+				e.printStackTrace();
+			}
 		
 	}
 
@@ -129,7 +196,7 @@ public class ClientHandler extends Thread{
 		String pol=ulazniTok.readLine();
 		String email=ulazniTok.readLine();
 		
-		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email);
+		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null));
 //		klijent=new KlijentPodaci(username, lozinka, imeIPrezime, pol, email, testSamoprocene, brziTest)
 		if(Server.listaRegistrovanih.contains(klijent)) {
 			izlazniTok.println("zauzet");
@@ -169,9 +236,11 @@ public class ClientHandler extends Thread{
 			
 		}catch (Exception e) {
 			System.out.println("Greska prilikom serijalizacije"+ e.getMessage());
+			e.printStackTrace();
 		}
 		
 	}
+	
 	
 	
 }
