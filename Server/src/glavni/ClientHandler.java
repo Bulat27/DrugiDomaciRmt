@@ -97,8 +97,13 @@ public class ClientHandler extends Thread{
 	
 	
 
-	private void pregledPoslednjegPCR() {
-		// TODO Auto-generated method stub
+	private void pregledPoslednjegPCR() throws IOException {
+		if(klijent.pcrTest!=null) {
+			izlazniZaObjekte.writeObject(klijent.pcrTest.getDatum());
+			izlazniTok.println(klijent.pcrTest.getStatus());
+			}else {
+				//trebalo bi da mu posaljem nullove da bi on tamo obraido greksu! Sljaka i bez toga, tj posalje mu nullove
+			}
 		
 	}
 
@@ -107,7 +112,7 @@ public class ClientHandler extends Thread{
 			izlazniZaObjekte.writeObject(klijent.brziTest.getDatum());
 			izlazniTok.println(klijent.brziTest.getStatus());
 			}else {
-				//trebalo bi da mu posaljem nullove da bi on tamo obraido greksu!
+				//trebalo bi da mu posaljem nullove da bi on tamo obraido greksu!  Sljaka i bez toga, tj posalje mu nullove
 			}
 			
 		
@@ -166,8 +171,47 @@ public class ClientHandler extends Thread{
 		
 	}
 
-	private void PCRtest() {
-		// TODO Auto-generated method stub
+	private void PCRtest() throws IOException {
+		GregorianCalendar datumTesta=null;
+		try {
+			 datumTesta = (GregorianCalendar) ulazniZaObjekte.readObject();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Greska prilikom ucitavanja objekta");
+			e.printStackTrace();
+		} 
+		//mislim da u ovom trenutku ne moze biti null jer sam ga napravio kako napravim klijenta, ali videcemo, ako pukne, stavis null proveru pa obradis nekako
+		klijent.pcrTest.setDatum(datumTesta);
+		Random r = new  Random();
+		int broj = r.nextInt(2);
+		if(broj==0) {
+			klijent.pcrTest.setStatus("negativan");
+		}else {
+			klijent.pcrTest.setStatus("pozitivan");
+		}
+		serijalizuj();
+		//Mislim da je okej ovako
+		klijent.pcrTest.setStanje("na cekanju");
+		izlazniTok.println(klijent.pcrTest.getStanje());
+//		try {
+//			sleep(3000);
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			System.out.println("Greska prilikom sleepa");
+//			e1.printStackTrace();
+//		}
+		klijent.pcrTest.setStanje("u obradi");
+		izlazniTok.println(klijent.pcrTest.getStanje());
+//		try {
+//			sleep(30000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			System.out.println("Greska prilikom sleepa");
+//			Thread.currentThread().interrupt();//Ovo sam nasao kao resenje na netu, mozda obrisem posle
+//			e.printStackTrace();
+//		}
+		klijent.pcrTest.setStanje("gotov");
+		izlazniTok.println(klijent.pcrTest.getStanje());
+		izlazniTok.println(klijent.pcrTest.getStatus());
 		
 	}
 
@@ -245,7 +289,7 @@ public class ClientHandler extends Thread{
 		String pol=ulazniTok.readLine();
 		String email=ulazniTok.readLine();
 		
-		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null),new BrziTest(null, null));
+		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null),new BrziTest(null, null),new PCRtest(null, null, null));
 //		klijent=new KlijentPodaci(username, lozinka, imeIPrezime, pol, email, testSamoprocene, brziTest)
 		if(Server.listaRegistrovanih.contains(klijent)) {
 			izlazniTok.println("zauzet");

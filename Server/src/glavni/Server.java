@@ -17,6 +17,7 @@ public class Server {
 	public static void main(String[] args) {
 		
 		ucitajListuIzFajla();
+		ispisiListu();//ovo je debug fora
 		int port = 9027;
 		ServerSocket serverSoket=null;
 		Socket soketZaKomunikaciju=null;
@@ -51,6 +52,17 @@ public class Server {
 	
 	
 	
+	private static void ispisiListu() {
+		for (KlijentPodaci klijentPodaci : listaRegistrovanih) {
+			System.out.println(klijentPodaci.username);
+		}
+		
+	}
+
+
+
+
+
 	private static void ucitajListuIzFajla() {// vidi da li radi kada su klijenti jedan za drugim!!!!!, trebalo bi da da
 		try(FileInputStream fIn= new FileInputStream("baza.dat");
 			BufferedInputStream bIn = new BufferedInputStream(fIn);
@@ -68,6 +80,8 @@ public class Server {
 			}
 			
 		}catch(Exception e) {
+			System.out.println("Greska prilikom citanja baze");
+			e.printStackTrace();
 		}
 		
 	}

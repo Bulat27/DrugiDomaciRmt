@@ -123,9 +123,20 @@ public class Klijent {
 		}
 	}
 
-
-	private static void pregledPoslednjegPCR() {
-		// TODO Auto-generated method stub
+// mislim da nema nekog smisla slati stanje, jer je ono gotovo, cim je poslednji, znaci to je neki vec gotov
+	private static void pregledPoslednjegPCR() throws IOException {
+		try {
+			GregorianCalendar datum = (GregorianCalendar) ulazniZaObjekte.readObject();
+			String status = ulazniTok.readLine();
+			if(datum==null || status==null) {
+				System.out.println("Nema podataka o poslednjem PCR testu.");
+			}else {
+				System.out.println("Datum poslednjeg PCR testa: "+ datum.getTime() +" Status: "+ status );
+			}
+		} catch (ClassNotFoundException e) {
+			System.out.println("Neka greska sa objektom");
+			e.printStackTrace();
+		} 
 		
 	}
 
@@ -137,7 +148,7 @@ public class Klijent {
 			if(datum==null || status==null) {
 				System.out.println("Nema podataka o poslednjem brzom testu.");
 			}else {
-				System.out.println("Datum poslednjeg brzog testa: "+ datum.getTime() +" Status: "+ status );
+				System.out.println("Datum poslednjeg brzog testa: "+ datum.getTime() +" Status: "+ status );//Treba preraditi format ispisa datuma, ta bude srpski, to cu na kraju!
 			}
 		} catch (ClassNotFoundException e) {
 			System.out.println("Neka greska sa objektom");
@@ -224,9 +235,39 @@ public class Klijent {
 	}
 
 
-	private static void PCRtest() {
-		// TODO Auto-generated method stub
+	private static void PCRtest() throws IOException {// Ako ostane skorz isto kao za brzi, onda moze i u jednu metodu
+		GregorianCalendar datumTesta = new GregorianCalendar();
+		izlazniZaObjekte.writeObject(datumTesta);
+		//proveri da li smes na klijentskoj da radis delay
+		String stanje1;
+		String stanje2;
+		String stanje3;
+		stanje1 = ulazniTok.readLine();
 		
+		stanje2 = ulazniTok.readLine();
+		
+		stanje3 = ulazniTok.readLine();
+		System.out.println("Trenutno stanje PCR testa je: "+stanje1);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Greska prilikom sleep-a");// vidi da li treba jos nekako da se obradjuje ovaj Exception
+			e.printStackTrace();
+		}
+		System.out.println("Trenutno stanje PCR testa je: "+stanje2);
+		
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Greska prilikom sleep-a");
+			e.printStackTrace();
+		}
+		System.out.println("Trenutno stanje PCR testa je: "+stanje3);
+		
+		String pozitivan = ulazniTok.readLine();
+		System.out.println("Rezultat PCR testa:" + pozitivan);
 	}
 
 

@@ -4,6 +4,14 @@ import java.io.Serializable;
 
 public class KlijentPodaci implements Serializable{
 	
+	/**
+	 * 
+	 *///ovo sam morao da mi ne bi bacao Exception kad cita bazu, bas zajeban bag, nadam se da valja ovo
+	private static final long serialVersionUID = -9147314537750526354L;
+	/**
+	 * 
+	 */
+
 	String username;
 	String lozinka;
 	String imeIPrezime;
@@ -11,9 +19,11 @@ public class KlijentPodaci implements Serializable{
 	String email;
 	TestSamoprocene testSamoprocene;
 	BrziTest brziTest;
+	PCRtest pcrTest;
 //	BrziTest brziTest;
 	
-	
+	//mozda sam mogao i sve atribute ovde da naguram, ali nije lose ovako sa testovima, bila bi dobra praksa i napraviti neki interfejs za tu trojicu pa onda neke fje napraviti
+	//kao zajednicke
 	
 //	public KlijentPodaci(String username, String lozinka, String imeIPrezime, String pol, String email,
 //			TestSamoprocene testSamoprocene, BrziTest brziTest) {
@@ -42,7 +52,7 @@ public class KlijentPodaci implements Serializable{
 
 
 
-	public KlijentPodaci(String username, String lozinka, String imeIPrezime, String pol, String email,TestSamoprocene testSamoprocene,BrziTest brziTest) {
+	public KlijentPodaci(String username, String lozinka, String imeIPrezime, String pol, String email,TestSamoprocene testSamoprocene,BrziTest brziTest,PCRtest pcRtest) {
 		super();
 		this.username = username;
 		this.lozinka = lozinka;
@@ -51,6 +61,7 @@ public class KlijentPodaci implements Serializable{
 		this.email = email;
 		this.testSamoprocene=testSamoprocene;
 		this.brziTest=brziTest;
+		this.pcrTest = pcRtest;
 	}
 	
 	
