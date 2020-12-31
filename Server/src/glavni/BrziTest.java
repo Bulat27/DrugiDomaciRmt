@@ -1,8 +1,9 @@
 package glavni;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
-public class BrziTest {
+public class BrziTest implements Serializable{
 	private String status;
 	private GregorianCalendar datum;
 	

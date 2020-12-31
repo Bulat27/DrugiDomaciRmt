@@ -72,12 +72,14 @@ public class Klijent {
 			while(!kraj) {
 			System.out.println("Izaberite neku od sledecih opcija:");
 			System.out.println("1-Test za samoprocenu");
-			System.out.println("2-Podaci o poslednjoj samoproceni");
+			System.out.println("2-Podaci o poslednjem testu samoprocene");
 			System.out.println("3-Prekid komunikacije");
+			System.out.println("4-Podaci o poslednjem brzom testu");
+			System.out.println("5-Podaci o poslednjem PCR testu");
 			String drugaOpcija=tastatura.readLine();
 			switch (drugaOpcija) {
 			case "1":
-				izlazniTok.println(drugaOpcija);
+				izlazniTok.println(drugaOpcija);//Ni ne mora svaki put ovako da se salje, jer je svakako mora poslati, moze u opstem slucaju da posalje,a  tek onda case-evi
 				testSamoprocene();
 				kraj=true;
 				break;
@@ -92,6 +94,16 @@ public class Klijent {
 			System.out.println("Dovidjenja");
 			soketZaKomunikaciju.close();
 			return;
+			case "4":
+				izlazniTok.println(drugaOpcija);
+				pregledPoslednjegBrzog();
+				kraj=true;
+				break;
+			case "5":
+				izlazniTok.println(drugaOpcija);
+			    pregledPoslednjegPCR();
+			    kraj=true;//Skloni posle ove samo, mozda cu time da resim to da uvek ostaje vamo i da bira opcije
+			    break;
 			// vidi da li ovo skroz prekida izvrsavanje
 			default:
 				System.out.println("Molimo Vas izaberite validnu opciju");
@@ -112,14 +124,38 @@ public class Klijent {
 	}
 
 
+	private static void pregledPoslednjegPCR() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private static void pregledPoslednjegBrzog() throws IOException {// mogla bi da bude i metoda jer se vise puta ponavlja slicno, ali aj za sad cu ovako seljacki pa posle ulepsaj
+		try {
+			GregorianCalendar datum = (GregorianCalendar) ulazniZaObjekte.readObject();
+			String status = ulazniTok.readLine();
+			if(datum==null || status==null) {
+				System.out.println("Nema podataka o poslednjem brzom testu.");
+			}else {
+				System.out.println("Datum poslednjeg brzog testa: "+ datum.getTime() +" Status: "+ status );
+			}
+		} catch (ClassNotFoundException e) {
+			System.out.println("Neka greska sa objektom");
+			e.printStackTrace();
+		} 
+		
+		
+	}
+
+
 	private static void pregledPoslednjegSamoprocene() throws IOException {
 		try {
 			GregorianCalendar datum = (GregorianCalendar) ulazniZaObjekte.readObject();
 			String status = ulazniTok.readLine();
 			if(datum==null || status==null) {
-				System.out.println("Nema podataka o poslednjoj samo proceni");
+				System.out.println("Nema podataka o poslednjoj samoproceni");
 			}else {
-				System.out.println("Datum poslednje samo procene: "+ datum.getTime() +"Status: "+ status );
+				System.out.println("Datum poslednje samoprocene: "+ datum.getTime() +" Status: "+ status );
 			}
 		} catch (ClassNotFoundException e) {
 			System.out.println("Neka greska sa objektom");
@@ -195,6 +231,8 @@ public class Klijent {
 
 
 	private static void brziTest() throws IOException {
+		GregorianCalendar datumTesta = new GregorianCalendar();
+		izlazniZaObjekte.writeObject(datumTesta);
 		String pozitivan = ulazniTok.readLine();
 		System.out.println("Rezultat brzog testa: "+ pozitivan );
 	}

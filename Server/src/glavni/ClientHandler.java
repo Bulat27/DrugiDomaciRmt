@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.GregorianCalendar;
+import java.util.Random;
 
 public class ClientHandler extends Thread{
 	
@@ -70,17 +71,45 @@ public class ClientHandler extends Thread{
 				soketZaKomunikaciju.close();
 				return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
 				//break;
+			case "4":
+				pregledPoslednjegBrzog();
+				break;
+			case "5":
+				pregledPoslednjegPCR();
+				break;
 			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("GRIJESKA");
 			
-			e.printStackTrace();
+			e.printStackTrace();// ovo posle izbrisi
 			System.out.println("Klijent se nasilno iskljucio");
 		}
 		
 		
+		
+	}
+	
+//	private void pregledPoslednjegTesta() {
+//		
+//	}// OVO URADI AKO BUDES IMAO VREMENA, NAPRAVIS INTEFREJS TEST, PRIHVATA SVA TRI, VIDI KOJI JE I PROSLEDI U ODNOSU NA TO
+	
+	
+
+	private void pregledPoslednjegPCR() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void pregledPoslednjegBrzog() throws IOException {
+		if(klijent.brziTest!=null) {
+			izlazniZaObjekte.writeObject(klijent.brziTest.getDatum());
+			izlazniTok.println(klijent.brziTest.getStatus());
+			}else {
+				//trebalo bi da mu posaljem nullove da bi on tamo obraido greksu!
+			}
+			
 		
 	}
 
@@ -89,7 +118,7 @@ public class ClientHandler extends Thread{
 		izlazniZaObjekte.writeObject(klijent.testSamoprocene.getDatum());
 		izlazniTok.println(klijent.testSamoprocene.getStatus());
 		}else {
-			//trebalo bi da mu posaljem nullove da bi on tamo obraido greksu
+			//trebalo bi da mu posaljem nullove da bi on tamo obraido greksu, i onako mu posalje nullove, tako da sljaka!
 		}
 		
 	}
@@ -142,9 +171,25 @@ public class ClientHandler extends Thread{
 		
 	}
 
-	private void brziTest() {
-		// TODO Auto-generated method stub
-		
+	private void brziTest() throws IOException {
+		GregorianCalendar datumTesta=null;
+		try {
+			 datumTesta = (GregorianCalendar) ulazniZaObjekte.readObject();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Greska prilikom ucitvanja objekta");
+			e.printStackTrace();
+		} 
+		//mislim da u ovom trenutku ne moze biti null jer sam ga napravio kako napravim klijenta, ali videcemo, ako pukne, stavis null proveru pa obradis nekako
+		klijent.brziTest.setDatum(datumTesta);
+		Random r = new  Random();
+		int broj = r.nextInt(2);
+		if(broj==0) {
+			klijent.brziTest.setStatus("negativan");
+		}else {
+			klijent.brziTest.setStatus("pozitivan");
+		}
+		serijalizuj();
+		izlazniTok.println(klijent.brziTest.getStatus());
 	}
 
 	private void serijalizuj() {
@@ -165,24 +210,28 @@ public class ClientHandler extends Thread{
 
 	private void logovanje() throws IOException {
 		boolean kraj =false;
+		boolean nasao=false;
 		String username;
 		String lozinka;
 		while(!kraj) {
 			username = ulazniTok.readLine();
 			lozinka=ulazniTok.readLine();
-			if(Server.listaRegistrovanih.isEmpty()) {
+		if(Server.listaRegistrovanih.isEmpty()) {
 				izlazniTok.println("nije");
 				continue;
 			}
+			// mozda moze lepse da se resi sa contains metodom
 			for (KlijentPodaci trenutni : Server.listaRegistrovanih) {
 				if(trenutni.username.equals(username) && trenutni.lozinka.equals(lozinka)) {
 					kraj =true;
+					nasao=true;
 					klijent=trenutni;
 					izlazniTok.println("validan");
-				}else {
-					izlazniTok.println("nije");
-				}
+				}//else {
+					//izlazniTok.println("nije");
+				//}
 			}
+			if(!nasao)izlazniTok.println("nije");
 		}
 		
 	}
@@ -196,7 +245,7 @@ public class ClientHandler extends Thread{
 		String pol=ulazniTok.readLine();
 		String email=ulazniTok.readLine();
 		
-		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null));
+		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null),new BrziTest(null, null));
 //		klijent=new KlijentPodaci(username, lozinka, imeIPrezime, pol, email, testSamoprocene, brziTest)
 		if(Server.listaRegistrovanih.contains(klijent)) {
 			izlazniTok.println("zauzet");

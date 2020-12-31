@@ -10,7 +10,7 @@ public class KlijentPodaci implements Serializable{
 	String pol;
 	String email;
 	TestSamoprocene testSamoprocene;
-	
+	BrziTest brziTest;
 //	BrziTest brziTest;
 	
 	
@@ -42,7 +42,7 @@ public class KlijentPodaci implements Serializable{
 
 
 
-	public KlijentPodaci(String username, String lozinka, String imeIPrezime, String pol, String email,TestSamoprocene testSamoprocene) {
+	public KlijentPodaci(String username, String lozinka, String imeIPrezime, String pol, String email,TestSamoprocene testSamoprocene,BrziTest brziTest) {
 		super();
 		this.username = username;
 		this.lozinka = lozinka;
@@ -50,6 +50,7 @@ public class KlijentPodaci implements Serializable{
 		this.pol = pol;
 		this.email = email;
 		this.testSamoprocene=testSamoprocene;
+		this.brziTest=brziTest;
 	}
 	
 	
