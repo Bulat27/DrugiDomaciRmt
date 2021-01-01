@@ -56,7 +56,12 @@ public class ClientHandler extends Thread{
 				
 			}
 			
-			
+			if(klijent.username.equals("Admin")) {
+				izlazniTok.println("admin");
+//				System.out.println("Prosao je Admin");
+				adminoveOpcije();
+			}else {
+			izlazniTok.println("nije admin");
 //			izlazniTok.println("Prosao si");
 			String drugaOpcija =ulazniTok.readLine();
 			switch (drugaOpcija) {
@@ -77,7 +82,7 @@ public class ClientHandler extends Thread{
 				pregledPoslednjegPCR();
 				break;
 			}
-			
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("GRIJESKA");
@@ -90,11 +95,67 @@ public class ClientHandler extends Thread{
 		
 	}
 	
+	private void adminoveOpcije() throws IOException {
+		String drugaOpcija =ulazniTok.readLine();
+		switch (drugaOpcija) {
+		case "1":
+			testSamoprocene();
+			break;
+		case "2":
+			pregledPoslednjeSamoprocene();
+			break;
+		case "3":
+//			soketZaKomunikaciju.close();
+//			return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
+			//break;
+		case "4":
+			pregledPoslednjegBrzog();
+			break;
+		case "5":
+			statistika();
+			break;
+		case "6":
+			soketZaKomunikaciju.close();
+			return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
+			//break;
+		}
+		
+	}
+
 //	private void pregledPoslednjegTesta() {
 //		
 //	}// OVO URADI AKO BUDES IMAO VREMENA, NAPRAVIS INTEFREJS TEST, PRIHVATA SVA TRI, VIDI KOJI JE I PROSLEDI U ODNOSU NA TO
 	
 	
+
+	private void statistika() {
+		//ako neki test ima datum, tj ako datum != null znaci da je test radjen, tako ih brojim
+		// testovi ne mogu biti null u ovom trenutku jer cim postoji klijent, njegovi testovi su inicijalizovani
+		int brSP = 0;
+		int brBrzih = 0;
+		int brPCR = 0;
+		int brPozitivnih = 0;
+		int brNegativnih = 0;
+		int brPodNadzorom = 0;
+		for (KlijentPodaci k : Server.listaRegistrovanih) {
+			if(k.testSamoprocene.getDatum()!=null)brSP++;
+			if(k.brziTest.getDatum()!=null)brBrzih++;
+			if(k.pcrTest.getDatum()!=null)brPCR++;
+			
+			String trenutnoStanje = k.trenutnoStanje;
+			// nista mi ne znaci elseif jer moze da bude i nepoznat pa ne mogu da kazem else: pa dodaj na nesto
+			if(trenutnoStanje.equals("pozitivan"))brPozitivnih++;
+			if(trenutnoStanje.equals("negativan"))brNegativnih++;
+			if(trenutnoStanje.equals("pod nadzorom"))brPodNadzorom++;
+		}
+			izlazniTok.println(String.valueOf(brSP));
+			izlazniTok.println(String.valueOf(brBrzih));
+			izlazniTok.println(String.valueOf(brPCR));
+			izlazniTok.println(String.valueOf(brPozitivnih));
+			izlazniTok.println(String.valueOf(brNegativnih));
+			izlazniTok.println(String.valueOf(brPodNadzorom));
+		
+	}
 
 	private void pregledPoslednjegPCR() throws IOException {
 		if(klijent.pcrTest!=null) {
@@ -309,6 +370,12 @@ public class ClientHandler extends Thread{
 				izlazniTok.println("nije");
 				continue;
 			}
+		if((username.equals("Admin") && lozinka.equals("NBJMVS"))){
+			kraj=true;
+			nasao=true;
+			klijent=new KlijentPodaci("Admin", "NBJMVS", null, null, null, null, null, null, null);// mislim da nema potrebe ni da ga serijalizujem, samo cu zabraniti tamo prijavu kao admin
+			izlazniTok.println("validan");//mozda i da bude println("admin")
+		}
 			// mozda moze lepse da se resi sa contains metodom
 			for (KlijentPodaci trenutni : Server.listaRegistrovanih) {
 				if(trenutni.username.equals(username) && trenutni.lozinka.equals(lozinka)) {// malo je glupo proveravati ovako i admina svaki put, posle doteraj to
@@ -336,7 +403,7 @@ public class ClientHandler extends Thread{
 		
 		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null),new BrziTest(null, null),new PCRtest(null, null, null),"nepoznato");
 //		klijent=new KlijentPodaci(username, lozinka, imeIPrezime, pol, email, testSamoprocene, brziTest)
-		if(Server.listaRegistrovanih.contains(klijent)) {
+		if(username.equals("Admin") || Server.listaRegistrovanih.contains(klijent)) {
 			izlazniTok.println("zauzet");
 			klijent=null;
 		}else {

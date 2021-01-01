@@ -63,6 +63,12 @@ public class Klijent {
 			
 			}
 			
+			String admin = ulazniTok.readLine();
+			if(admin.equals("admin")) {
+				//System.out.println("Prosli smo kao admin");
+				adminoveOpcije();
+			}else {
+				
 //			System.out.println(ulazniTok.readLine());
 			System.out.println("Ulogovani ste na svoj nalog");
 			//ovde ce biti vise opcija
@@ -112,7 +118,7 @@ public class Klijent {
 			}
 			
 			
-			
+		}
 			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -122,6 +128,85 @@ public class Klijent {
 			e.printStackTrace();
 		}
 	}
+
+private static void adminoveOpcije() throws IOException {
+		//prvo treba odma da mu se ispisu sve liste koje ima u onom zahtevu, to cu posle
+		System.out.println("Dobrodosli Admine!");
+		boolean kraj=false;
+		while(!kraj) {
+			System.out.println("Izaberite neku od sledecih opcija:");
+			System.out.println("1-Lista svih korisnika i njihovo stanje");
+			System.out.println("2-Lista pozitivnih korisnika");
+			System.out.println("3-Lista negativnih korisnika");
+			System.out.println("4-Lista korisnika pod nadzorom");
+			System.out.println("5-Statistika o broju testiranja, pozitivnih testova, negativnih testova i pacijenata pod nadzorom");
+			System.out.println("6-Prekid komunikacije");
+			String drugaOpcija=tastatura.readLine();
+			switch (drugaOpcija) {
+			case "1":
+				izlazniTok.println(drugaOpcija);//Ni ne mora svaki put ovako da se salje, jer je svakako mora poslati, moze u opstem slucaju da posalje,a  tek onda case-evi
+				listaSvihKorisnika();
+				kraj=true;
+				break;
+			case "2":
+				//MORA PRINTLN, NE MOZE SAMO PRINT, NE POPIJE GA LEPO, VIDI TO!
+				izlazniTok.println(drugaOpcija);
+				listaKorisnika("pozitivan");
+				kraj=true;
+				break;
+			case "3":
+				izlazniTok.println(drugaOpcija);
+				listaKorisnika("negativan");
+				kraj=true;
+				break;
+			case "4":
+				izlazniTok.println(drugaOpcija);
+				listaKorisnika("pod nadzorom");
+				kraj=true;
+				break;
+			case "5":
+				izlazniTok.println(drugaOpcija);
+			    statistika();
+			    kraj=true;//Skloni posle ove samo, mozda cu time da resim to da uvek ostaje vamo i da bira opcije
+			    break;
+			// vidi da li ovo skroz prekida izvrsavanje
+			case "6":
+				izlazniTok.println(drugaOpcija);
+				System.out.println("Dovidjenja");
+				soketZaKomunikaciju.close();
+				return;
+			default:
+				System.out.println("Molimo Vas izaberite validnu opciju");
+				break;// mislim da ovaj break nije ni potreban
+			}
+			}
+		
+	}
+
+	private static void listaSvihKorisnika() {
+	// TODO Auto-generated method stub
+	
+}
+
+	private static void statistika() throws IOException {
+		String brojTestovaSamoProcene = ulazniTok.readLine();// proveri da li ovde misle da se broje svi testovi
+		String brojBrzihTestova = ulazniTok.readLine();
+		String brojPCRTestova = ulazniTok.readLine();
+		String brojPozitivnih =ulazniTok.readLine();
+		String brojNegativnih = ulazniTok.readLine();
+		String brojPodNadzorom = ulazniTok.readLine();
+		System.out.println("Broj uradjenih testova samoprocene: " + brojTestovaSamoProcene);
+		System.out.println("Broj uradjenih brzih testova: " + brojBrzihTestova);
+		System.out.println("Broj uradjenih PCR testova: " + brojPCRTestova);
+		System.out.println("Broj pozitivnih: " + brojPozitivnih);
+		System.out.println("Broj negativnih: " + brojNegativnih);
+		System.out.println("Broj pacijenata pod nadzorom: " + brojPodNadzorom);
+}
+
+	private static void listaKorisnika(String string) {
+	// TODO Auto-generated method stub
+	
+}
 
 // mislim da nema nekog smisla slati stanje, jer je ono gotovo, cim je poslednji, znaci to je neki vec gotov
 	private static void pregledPoslednjegPCR() throws IOException {
