@@ -54,7 +54,6 @@ public class ClientHandler extends Thread{
 				return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
 				//break;
 				
-			
 			}
 			
 			
@@ -144,6 +143,8 @@ public class ClientHandler extends Thread{
 		
 		String dalje = ulazniTok.readLine();
 		if(dalje.equals("jos testova")) {
+//			Server.statistika.povecajBrojTestiranja();
+//			azurirajStatistiku();
 			klijent.testSamoprocene.setStatus("dalje testiranje");
 			serijalizuj();// mora posle svake promene da se radi!
 			String trecaOpcija =ulazniTok.readLine();
@@ -159,15 +160,43 @@ public class ClientHandler extends Thread{
 				return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
 				//break;
 			case "4":
+				obaTesta();
 				//PCR i brzi, videcu kako cu to
 				break;
 			}
 			
 		}else {
+//			Server.statistika.povecajBrojTestiranja();
+//			Server.statistika.povecajBrojPodNadzorom();
+//			azurirajStatistiku();
 			klijent.testSamoprocene.setStatus("pod nadzorom");
+			klijent.trenutnoStanje = "pod nadzorom";
 			serijalizuj();
+//			System.out.println(klijent.trenutnoStanje);
 			//videcemo sta cemo ovde
 		}
+		
+	}
+
+//	private void azurirajStatistiku() {
+//		try(FileOutputStream fOut = new FileOutputStream("statistika.dat");
+//			BufferedOutputStream bOut = new BufferedOutputStream(fOut);
+//			ObjectOutputStream out = new ObjectOutputStream(bOut);	
+//					){
+////			for (int i = 0; i < Server.listaRegistrovanih.size(); i++) {
+////					out.writeObject(Server.listaRegistrovanih.get(i));
+////				}
+//				out.writeObject(Server.statistika);
+//			}catch (Exception e) {
+//				System.out.println("Greska prilikom serijalizacije statistike"+ e.getMessage());
+//				e.printStackTrace();
+//			}
+//		
+//	}
+
+	private void obaTesta() throws IOException {
+		brziTest();
+		PCRtest();
 		
 	}
 
@@ -185,10 +214,18 @@ public class ClientHandler extends Thread{
 		int broj = r.nextInt(2);
 		if(broj==0) {
 			klijent.pcrTest.setStatus("negativan");
+//			Server.statistika.povecajBrojTestiranja();
+//			Server.statistika.povecajBrojNegativnih();
+//			azurirajStatistiku();
 		}else {
 			klijent.pcrTest.setStatus("pozitivan");
+//			Server.statistika.povecajBrojTestiranja();
+//			Server.statistika.povecajBrojPozitivnih();
+//			azurirajStatistiku();
 		}
+		klijent.trenutnoStanje=klijent.pcrTest.getStatus();
 		serijalizuj();
+//		System.out.println(klijent.trenutnoStanje);
 		//Mislim da je okej ovako
 		klijent.pcrTest.setStanje("na cekanju");
 		izlazniTok.println(klijent.pcrTest.getStanje());
@@ -229,11 +266,19 @@ public class ClientHandler extends Thread{
 		int broj = r.nextInt(2);
 		if(broj==0) {
 			klijent.brziTest.setStatus("negativan");
+//			Server.statistika.povecajBrojTestiranja();
+//			Server.statistika.povecajBrojNegativnih();
+//			azurirajStatistiku();
 		}else {
 			klijent.brziTest.setStatus("pozitivan");
+//			Server.statistika.povecajBrojTestiranja();
+//			Server.statistika.povecajBrojPozitivnih();
+//			azurirajStatistiku();
 		}
+		klijent.trenutnoStanje=klijent.brziTest.getStatus();
 		serijalizuj();
 		izlazniTok.println(klijent.brziTest.getStatus());
+//		System.out.println(klijent.trenutnoStanje);
 	}
 
 	private void serijalizuj() {
@@ -266,7 +311,7 @@ public class ClientHandler extends Thread{
 			}
 			// mozda moze lepse da se resi sa contains metodom
 			for (KlijentPodaci trenutni : Server.listaRegistrovanih) {
-				if(trenutni.username.equals(username) && trenutni.lozinka.equals(lozinka)) {
+				if(trenutni.username.equals(username) && trenutni.lozinka.equals(lozinka)) {// malo je glupo proveravati ovako i admina svaki put, posle doteraj to
 					kraj =true;
 					nasao=true;
 					klijent=trenutni;
@@ -289,7 +334,7 @@ public class ClientHandler extends Thread{
 		String pol=ulazniTok.readLine();
 		String email=ulazniTok.readLine();
 		
-		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null),new BrziTest(null, null),new PCRtest(null, null, null));
+		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null),new BrziTest(null, null),new PCRtest(null, null, null),"nepoznato");
 //		klijent=new KlijentPodaci(username, lozinka, imeIPrezime, pol, email, testSamoprocene, brziTest)
 		if(Server.listaRegistrovanih.contains(klijent)) {
 			izlazniTok.println("zauzet");

@@ -14,9 +14,12 @@ public class Server {
 	public static LinkedList<KlijentPodaci> listaRegistrovanih=new LinkedList<>();//mora cu svaki put da je ucitivam iz tog fajla, ali necu ovu listu ipak, nego onu listu sa Klijent Podaci
 	// Korisnici nezavisno rade, tako da mi nije bitno koji su trenutno ulogovani
 	
+//	 public static Statistika statistika = new Statistika(0, 0, 0, 0);
+	
 	public static void main(String[] args) {
 		
 		ucitajListuIzFajla();
+//		ucitajStatistiku();
 		ispisiListu();//ovo je debug fora
 		int port = 9027;
 		ServerSocket serverSoket=null;
@@ -52,6 +55,25 @@ public class Server {
 	
 	
 	
+//	private static void ucitajStatistiku() {
+//		try(FileInputStream fIn= new FileInputStream("statistika.dat");
+//				BufferedInputStream bIn = new BufferedInputStream(fIn);
+//				ObjectInputStream in =new ObjectInputStream(bIn);	
+//					){
+//				
+////			statistika = (Statistika)(in.readObject());
+//				
+//			}catch(Exception e) {
+//				System.out.println("Greska prilikom citanja statistike");
+////				e.printStackTrace();
+//			}
+//		
+//	}
+
+
+
+
+
 	private static void ispisiListu() {
 		for (KlijentPodaci klijentPodaci : listaRegistrovanih) {
 			System.out.println(klijentPodaci.username);
@@ -81,7 +103,7 @@ public class Server {
 			
 		}catch(Exception e) {
 			System.out.println("Greska prilikom citanja baze");
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		
 	}

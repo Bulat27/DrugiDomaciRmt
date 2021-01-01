@@ -1,0 +1,13 @@
+package glavni;
+
+import java.io.Serializable;
+
+public class Statistika implements Serializable{
+	
+	private int brojTestiranja;
+	private int brojPozitivinih;
+	private int brojNegativnih;
+	private int brojPodNadzorom;
+	
+	
+}

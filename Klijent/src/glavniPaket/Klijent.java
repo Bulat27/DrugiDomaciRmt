@@ -148,7 +148,7 @@ public class Klijent {
 			if(datum==null || status==null) {
 				System.out.println("Nema podataka o poslednjem brzom testu.");
 			}else {
-				System.out.println("Datum poslednjeg brzog testa: "+ datum.getTime() +" Status: "+ status );//Treba preraditi format ispisa datuma, ta bude srpski, to cu na kraju!
+				System.out.println("Datum poslednjeg brzog testa: "+ datum.getTime() +" Status: "+ status );//Treba preraditi format ispisa datuma, ta bude srp
 			}
 		} catch (ClassNotFoundException e) {
 			System.out.println("Neka greska sa objektom");
@@ -224,7 +224,9 @@ public class Klijent {
 			soketZaKomunikaciju.close();
 			return;
 			case "4":
-				//videcemo kako cu oba da realizujem
+				izlazniTok.println(trecaOpcija);
+				obaTesta();
+				kraj=true;
 				break;
 			// vidi da li ovo skroz prekida izvrsavanje
 			default:
@@ -234,6 +236,11 @@ public class Klijent {
 			}
 	}
 
+
+	private static void obaTesta() throws IOException {
+		brziTest();
+		PCRtest();
+	}
 
 	private static void PCRtest() throws IOException {// Ako ostane skorz isto kao za brzi, onda moze i u jednu metodu
 		GregorianCalendar datumTesta = new GregorianCalendar();

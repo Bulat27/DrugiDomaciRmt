@@ -20,6 +20,7 @@ public class KlijentPodaci implements Serializable{
 	TestSamoprocene testSamoprocene;
 	BrziTest brziTest;
 	PCRtest pcrTest;
+	String trenutnoStanje;//u sustisni stanje poslednjeg uradjenog testa, moze biti pozitivan, negativan i pod nadzorom
 //	BrziTest brziTest;
 	
 	//mozda sam mogao i sve atribute ovde da naguram, ali nije lose ovako sa testovima, bila bi dobra praksa i napraviti neki interfejs za tu trojicu pa onda neke fje napraviti
@@ -52,7 +53,7 @@ public class KlijentPodaci implements Serializable{
 
 
 
-	public KlijentPodaci(String username, String lozinka, String imeIPrezime, String pol, String email,TestSamoprocene testSamoprocene,BrziTest brziTest,PCRtest pcRtest) {
+	public KlijentPodaci(String username, String lozinka, String imeIPrezime, String pol, String email,TestSamoprocene testSamoprocene,BrziTest brziTest,PCRtest pcRtest,String trenutnoStanje) {
 		super();
 		this.username = username;
 		this.lozinka = lozinka;
@@ -62,6 +63,7 @@ public class KlijentPodaci implements Serializable{
 		this.testSamoprocene=testSamoprocene;
 		this.brziTest=brziTest;
 		this.pcrTest = pcRtest;
+		this.trenutnoStanje=trenutnoStanje;
 	}
 	
 	
