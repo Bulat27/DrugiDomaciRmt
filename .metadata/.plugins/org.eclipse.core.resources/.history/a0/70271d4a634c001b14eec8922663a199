@@ -42,8 +42,5 @@ public class KlijentPodaciZaAdmina {
 		return "Ime i prezime: " +imePrezime + " e-mail: " +email + " Trenutno stanje: " +trenutnoStanje;
 	}
 	
-	public String toStringBezStanja() {
-		return "Ime i prezime: " +imePrezime + " e-mail: " +email;
-	}
 	
 }

@@ -37,13 +37,7 @@ public class KlijentPodaciZaAdmina {
 		this.trenutnoStanje = trenutnoStanje;
 	}
 	
-	@Override
-	public String toString() {
-		return "Ime i prezime: " +imePrezime + " e-mail: " +email + " Trenutno stanje: " +trenutnoStanje;
-	}
 	
-	public String toStringBezStanja() {
-		return "Ime i prezime: " +imePrezime + " e-mail: " +email;
-	}
+	
 	
 }

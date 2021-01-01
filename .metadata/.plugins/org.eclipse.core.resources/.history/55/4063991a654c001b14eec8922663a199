@@ -218,14 +218,10 @@ private static void adminoveOpcije() throws IOException {
 			KlijentPodaciZaAdmina k = new KlijentPodaciZaAdmina(imePrezime, email, trenutnoStanje);
 			podaci.add(k);
 		}
-		if(podaci.isEmpty()) {
-			System.out.println("Trenutno nema korisnika u bazi podataka");
-		}else {
 		int brojac =1;
 		for (KlijentPodaciZaAdmina k : podaci) {
 			System.out.println(brojac+". "+ k.toString());
 			brojac++;
-		}
 		}
 	
 }

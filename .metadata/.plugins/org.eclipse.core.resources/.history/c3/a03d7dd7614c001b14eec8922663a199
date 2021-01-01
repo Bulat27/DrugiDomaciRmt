@@ -39,11 +39,8 @@ public class KlijentPodaciZaAdmina {
 	
 	@Override
 	public String toString() {
-		return "Ime i prezime: " +imePrezime + " e-mail: " +email + " Trenutno stanje: " +trenutnoStanje;
+		return "Ime i prezime: " +imePrezime + "e-mail: " +email + "Trenutno stanje: " +trenutnoStanje;
 	}
 	
-	public String toStringBezStanja() {
-		return "Ime i prezime: " +imePrezime + " e-mail: " +email;
-	}
 	
 }

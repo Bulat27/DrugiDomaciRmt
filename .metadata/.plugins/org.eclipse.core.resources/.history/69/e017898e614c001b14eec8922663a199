@@ -102,13 +102,14 @@ public class ClientHandler extends Thread{
 			listaSvihKorisnika();
 			break;
 		case "2":
-			listaOdredjenihKorisnika("pozitivan");
+			pregledPoslednjeSamoprocene();
 			break;
 		case "3":
-			listaOdredjenihKorisnika("negativan");
-			break;
+//			soketZaKomunikaciju.close();
+//			return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
+			//break;
 		case "4":
-			listaOdredjenihKorisnika("pod nadzorom");
+			pregledPoslednjegBrzog();
 			break;
 		case "5":
 			statistika();
@@ -121,35 +122,9 @@ public class ClientHandler extends Thread{
 		
 	}
 
-	private void listaOdredjenihKorisnika(String trazenoStanje) {
-		String broj = String.valueOf(brElemenataTrazeneListe(trazenoStanje));
-		//moze sve da se cuva, pa da ne mora dva prolaza, ali okej je i ovako, nece ova adminska metoda biti preveliki broj puta pozivana, pa jos jedan prolaz i nije strasan
-		izlazniTok.println(broj);
-		for (KlijentPodaci k : Server.listaRegistrovanih) {
-			if(k.trenutnoStanje.equals(trazenoStanje)) {
-				izlazniTok.println(k.imeIPrezime);
-				izlazniTok.println(k.email);
-			}
-		}
-	}
-
-	private int brElemenataTrazeneListe(String trazenoStanje) {
-		int brojac = 0;
-		// nista od ovoga ne moze biti null, zato nisu potrebne provere
-		for (KlijentPodaci k : Server.listaRegistrovanih) {
-			if(k.trenutnoStanje.equals(trazenoStanje))brojac++;
-		}
-		return brojac;
-	}
-
 	private void listaSvihKorisnika() {
 		String broj = String.valueOf(Server.listaRegistrovanih.size());
-		izlazniTok.println(broj);
-		for (KlijentPodaci k : Server.listaRegistrovanih) {
-			izlazniTok.println(k.imeIPrezime);
-			izlazniTok.println(k.email);
-			izlazniTok.println(k.trenutnoStanje);
-		}
+		
 		
 		
 	}

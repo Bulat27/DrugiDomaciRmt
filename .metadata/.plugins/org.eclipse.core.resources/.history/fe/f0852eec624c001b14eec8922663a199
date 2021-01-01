@@ -152,17 +152,17 @@ private static void adminoveOpcije() throws IOException {
 			case "2":
 				//MORA PRINTLN, NE MOZE SAMO PRINT, NE POPIJE GA LEPO, VIDI TO!
 				izlazniTok.println(drugaOpcija);
-				listaOdredjenihKorisnika();
+				listaKorisnika("pozitivan");
 				kraj=true;
 				break;
 			case "3":
 				izlazniTok.println(drugaOpcija);
-				listaOdredjenihKorisnika();
+				listaKorisnika("negativan");
 				kraj=true;
 				break;
 			case "4":
 				izlazniTok.println(drugaOpcija);
-				listaOdredjenihKorisnika();
+				listaKorisnika("pod nadzorom");
 				kraj=true;
 				break;
 			case "5":
@@ -184,29 +184,6 @@ private static void adminoveOpcije() throws IOException {
 		
 	}
 
-	private static void listaOdredjenihKorisnika() throws IOException {
-		String prijem = ulazniTok.readLine();
-		int broj = Integer.valueOf(prijem);
-		LinkedList<KlijentPodaciZaAdmina> podaci = new LinkedList<>();
-		for (int i = 0; i < broj; i++) {
-			String imePrezime = ulazniTok.readLine();
-			String email = ulazniTok.readLine();
-//			String trenutnoStanje = ulazniTok.readLine();
-			KlijentPodaciZaAdmina k = new KlijentPodaciZaAdmina(imePrezime, email, null);//nije bitno necu mu ni pristupati
-			podaci.add(k);
-		}
-		if(podaci.isEmpty()) {
-			System.out.println("Trenutno nema korisnika sa trazenim stanjem");
-		}else {
-		int brojac =1;
-		for (KlijentPodaciZaAdmina k : podaci) {
-			System.out.println(brojac+". "+ k.toStringBezStanja());
-			brojac++;
-		}
-		}
-	
-}
-
 	private static void listaSvihKorisnika() throws IOException {
 		String prijem = ulazniTok.readLine();
 		int broj = Integer.valueOf(prijem);
@@ -218,14 +195,10 @@ private static void adminoveOpcije() throws IOException {
 			KlijentPodaciZaAdmina k = new KlijentPodaciZaAdmina(imePrezime, email, trenutnoStanje);
 			podaci.add(k);
 		}
-		if(podaci.isEmpty()) {
-			System.out.println("Trenutno nema korisnika u bazi podataka");
-		}else {
 		int brojac =1;
 		for (KlijentPodaciZaAdmina k : podaci) {
 			System.out.println(brojac+". "+ k.toString());
 			brojac++;
-		}
 		}
 	
 }
@@ -245,10 +218,10 @@ private static void adminoveOpcije() throws IOException {
 		System.out.println("Broj pacijenata pod nadzorom: " + brojPodNadzorom);
 }
 
-//	private static void listaKorisnika(String string) {
-//	// TODO Auto-generated method stub
-//	
-//}
+	private static void listaKorisnika(String string) {
+	// TODO Auto-generated method stub
+	
+}
 
 // mislim da nema nekog smisla slati stanje, jer je ono gotovo, cim je poslednji, znaci to je neki vec gotov
 	private static void pregledPoslednjegPCR() throws IOException {
