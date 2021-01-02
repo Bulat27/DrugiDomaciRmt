@@ -1,0 +1,19 @@
+package glavni;
+
+import java.io.Serializable;
+import java.util.GregorianCalendar;
+
+public class TestSamoprocene implements Serializable{
+	private String status;
+	private GregorianCalendar datum;
+	private String izlazakIzNadzora;
+	private int brojac;//broj uradjenih testova samoprocene
+	
+	
+	
+	
+	
+	
+	
+	
+}

@@ -64,6 +64,10 @@ public class ClientHandler extends Thread{
 			}else {
 			izlazniTok.println("nije admin");
 //			izlazniTok.println("Prosao si");
+			
+			proveraPodNadzorom();
+			
+			
 			while(true) {
 			String drugaOpcija =ulazniTok.readLine();
 			switch (drugaOpcija) {
@@ -98,6 +102,42 @@ public class ClientHandler extends Thread{
 		
 	}
 	
+	private void proveraPodNadzorom() throws IOException {
+//		if(klijent.trenutnoStanje.equals("pod nadzorom") && prosaoDatum()) {
+//			izlazniTok.println("obavezna samoprocena");
+//		}
+		if(klijent.trenutnoStanje.equals("pod nadzorom")) {
+			izlazniTok.println("idi dalje");
+			if(prosaoDatum()) {
+				izlazniTok.println("obavezna samoprocena");
+			}else {
+				izlazniTok.println("nije obavezna");
+			}
+		}else {
+			izlazniTok.println("nemoj dalje");
+		}
+	}
+
+	private boolean prosaoDatum() throws IOException {
+		try {
+			GregorianCalendar datumLogina = (GregorianCalendar) ulazniZaObjekte.readObject();
+			GregorianCalendar danPosle = klijent.testSamoprocene.getDatum();//ovo ovde ne moze biti null, jer ovde dolazi samo ako je pod nadzorom, a to znaci da je morao uraditi test samoprocene vec
+			if(danPosle!=null)danPosle.add(GregorianCalendar.MINUTE, 1);
+			if(datumLogina.after(danPosle)) {
+				return true;
+			}else {
+				return false;
+			}
+			
+		} catch (ClassNotFoundException e) {
+			System.out.println("Greska prilikom citanja objekta");
+			e.printStackTrace();
+			return false;// vidi jos malo oko ovog i svih Exceptiona
+		} 
+		
+		
+	}
+
 	private void ispisListaPriUlasku() throws IOException {
 		try {
 			GregorianCalendar datumPrethodnogLogina = (GregorianCalendar) (ulazniZaObjekte.readObject());
@@ -280,7 +320,7 @@ public class ClientHandler extends Thread{
 			System.out.println("PROBLEM SAM CITANJEM OBJEKTA");
 			e.printStackTrace();
 		} 
-		if(klijent.testSamoprocene==null)klijent.testSamoprocene = new TestSamoprocene(null, null);
+		if(klijent.testSamoprocene==null)klijent.testSamoprocene = new TestSamoprocene(null, null,0);//mislim da ovo ovde nije neophodno
 		klijent.testSamoprocene.setDatum(datumSamoProcene);
 //		if(datumSamoProcene!=null) {
 //			System.out.println(datumSamoProcene.getTime());
@@ -302,7 +342,8 @@ public class ClientHandler extends Thread{
 				break;
 			case "3":
 				soketZaKomunikaciju.close();
-				return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
+//				return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)? Ovde ne radi posao, prekida sao ovu metodu, a ne celu run metodu
+//				System.exit(0);
 				//break;
 			case "4":
 				obaTesta();
@@ -311,14 +352,19 @@ public class ClientHandler extends Thread{
 			}
 			
 		}else {
-//			Server.statistika.povecajBrojTestiranja();
-//			Server.statistika.povecajBrojPodNadzorom();
-//			azurirajStatistiku();
+			if(klijent.testSamoprocene.getBrojac()%2==0) {// ako je taj prvi test, ide pod nadzor, ako je drugi, onda izlazi iz nadzora i vodi se kao negativan
+				//Ako oce opet da ulazi, onda opet ima priliku da udje pod nadzor
 			klijent.testSamoprocene.setStatus("pod nadzorom");
 			klijent.trenutnoStanje = "pod nadzorom";
 			serijalizuj();
-//			System.out.println(klijent.trenutnoStanje);
+			}else {
+				klijent.testSamoprocene.setStatus("negativan");
+				klijent.trenutnoStanje = "negativan";
+				serijalizuj();
+			}
 			//videcemo sta cemo ovde
+			klijent.testSamoprocene.povecajBrojac();
+			serijalizuj();
 		}
 		
 	}
@@ -450,15 +496,17 @@ public class ClientHandler extends Thread{
 		while(!kraj) {
 			username = ulazniTok.readLine();
 			lozinka=ulazniTok.readLine();
-		if(Server.listaRegistrovanih.isEmpty()) {
-				izlazniTok.println("nije");
-				continue;
-			}
+			
 		if((username.equals("Admin") && lozinka.equals("NBJMVS"))){
 			kraj=true;
 			nasao=true;
 			klijent=new KlijentPodaci("Admin", "NBJMVS", null, null, null, null, null, null, null);// mislim da nema potrebe ni da ga serijalizujem, samo cu zabraniti tamo prijavu kao admin
 			izlazniTok.println("validan");//mozda i da bude println("admin")
+			break;
+		}
+		if(Server.listaRegistrovanih.isEmpty()) {
+			izlazniTok.println("nije");
+			continue;
 		}
 			// mozda moze lepse da se resi sa contains metodom
 			for (KlijentPodaci trenutni : Server.listaRegistrovanih) {
@@ -485,7 +533,7 @@ public class ClientHandler extends Thread{
 		String pol=ulazniTok.readLine();
 		String email=ulazniTok.readLine();
 		
-		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null),new BrziTest(null, null),new PCRtest(null, null, null),"nepoznato");
+		klijent = new KlijentPodaci(username, lozinka, imeIPrezime, pol, email,new TestSamoprocene(null, null,0),new BrziTest(null, null),new PCRtest(null, null, null),"nepoznato");
 //		klijent=new KlijentPodaci(username, lozinka, imeIPrezime, pol, email, testSamoprocene, brziTest)
 		if(username.equals("Admin") || Server.listaRegistrovanih.contains(klijent)) {
 			izlazniTok.println("zauzet");

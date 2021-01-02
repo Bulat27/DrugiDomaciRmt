@@ -80,6 +80,20 @@ public class Klijent {
 				
 //			System.out.println(ulazniTok.readLine());
 			System.out.println("Ulogovani ste na svoj nalog");
+			//proveraPodNadzorom();
+			boolean moraSamprocena = false;
+			String potvrda = ulazniTok.readLine();
+			if(potvrda.equals("idi dalje")) {
+				GregorianCalendar datumLogina = new GregorianCalendar();
+				izlazniZaObjekte.writeObject(datumLogina);
+				String obavezna = ulazniTok.readLine();
+				if(obavezna.equals("obavezna samoprocena")) {
+					moraSamprocena=true;
+				}
+			}
+			
+			
+			
 			//ovde ce biti vise opcija
 			kraj =false;
 			// vidi da li ce ovde biti beskonacni while pa gde ce da ga vraca, koje sve opcije ima i to
@@ -92,11 +106,13 @@ public class Klijent {
 			System.out.println("3-Prekid komunikacije");
 			System.out.println("4-Podaci o poslednjem brzom testu");
 			System.out.println("5-Podaci o poslednjem PCR testu");
-			String drugaOpcija=tastatura.readLine();
+//			String drugaOpcija=tastatura.readLine();
+			String drugaOpcija = moraSamprocena ? "1":tastatura.readLine();
 			switch (drugaOpcija) {
 			case "1":
 				izlazniTok.println(drugaOpcija);//Ni ne mora svaki put ovako da se salje, jer je svakako mora poslati, moze u opstem slucaju da posalje,a  tek onda case-evi
 				testSamoprocene();
+				moraSamprocena=false;
 //				kraj=true;
 				break;
 			case "2":
@@ -146,6 +162,19 @@ public class Klijent {
 			e.printStackTrace();
 		}
 	}
+
+//private static void proveraPodNadzorom() throws IOException {
+//		String potvrda = ulazniTok.readLine();
+//		if(potvrda.equals("idi dalje")) {
+//			GregorianCalendar datumLogina = new GregorianCalendar();
+//			izlazniZaObjekte.writeObject(datumLogina);
+//			String obavezna = ulazniTok.readLine();
+//			if(obavezna.equals("obavezna samoprocena")) {
+//				drugaOpcija = 1;
+//			}
+//		}
+//		
+//	}
 
 private static void adminoveOpcije() throws IOException {
 		//prvo treba odma da mu se ispisu sve liste koje ima u onom zahtevu, to cu posle
@@ -430,7 +459,8 @@ private static void adminoveOpcije() throws IOException {
 			izlazniTok.println(trecaOpcija);
 			System.out.println("Dovidjenja");
 			soketZaKomunikaciju.close();
-			return;
+//			return;
+//			System.exit(0);//ovde nije u main-u i onda nece return da radi posao
 			case "4":
 				izlazniTok.println(trecaOpcija);
 				obaTesta();
