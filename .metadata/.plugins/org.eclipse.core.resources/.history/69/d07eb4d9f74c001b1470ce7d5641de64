@@ -136,7 +136,6 @@ public class Klijent {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			try {
-				if(soketZaKomunikaciju!=null)
 				soketZaKomunikaciju.close();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block

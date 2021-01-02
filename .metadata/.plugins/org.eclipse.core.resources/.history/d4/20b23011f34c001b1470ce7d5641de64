@@ -64,7 +64,6 @@ public class ClientHandler extends Thread{
 			}else {
 			izlazniTok.println("nije admin");
 //			izlazniTok.println("Prosao si");
-			while(true) {
 			String drugaOpcija =ulazniTok.readLine();
 			switch (drugaOpcija) {
 			case "1":
@@ -83,7 +82,6 @@ public class ClientHandler extends Thread{
 			case "5":
 				pregledPoslednjegPCR();
 				break;
-			}
 			}
 			}
 		} catch (IOException e) {
@@ -147,7 +145,6 @@ public class ClientHandler extends Thread{
 	}
 
 	private void adminoveOpcije() throws IOException {
-		while(true) {
 		String drugaOpcija =ulazniTok.readLine();
 		switch (drugaOpcija) {
 		case "1":
@@ -170,7 +167,7 @@ public class ClientHandler extends Thread{
 			return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)?
 			//break;
 		}
-		}
+		
 	}
 
 	private void listaOdredjenihKorisnika(String trazenoStanje) {

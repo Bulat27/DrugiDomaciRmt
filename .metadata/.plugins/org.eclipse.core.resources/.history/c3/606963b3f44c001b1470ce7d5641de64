@@ -135,14 +135,6 @@ public class Klijent {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			try {
-				if(soketZaKomunikaciju!=null)
-				soketZaKomunikaciju.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			System.out.println("SERVER JE PAO!");
 			e.printStackTrace();
 		}
 	}
@@ -153,7 +145,6 @@ private static void adminoveOpcije() throws IOException {
 		System.out.println("Dobrodosli Admine!");
 		boolean kraj=false;
 		while(!kraj) {
-			System.out.println();
 			System.out.println("Izaberite neku od sledecih opcija:");
 			System.out.println("1-Lista svih korisnika i njihovo stanje");
 			System.out.println("2-Lista pozitivnih korisnika");

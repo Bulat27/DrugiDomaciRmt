@@ -85,7 +85,6 @@ public class Klijent {
 			// vidi da li ce ovde biti beskonacni while pa gde ce da ga vraca, koje sve opcije ima i to
 			//NA KRAJU CES GA VRACATI STALNO NA OVAJ MENI, ZNACI OVDE NEGDE CE BESKONACNI WHILE!!!!
 			while(!kraj) {
-			System.out.println();
 			System.out.println("Izaberite neku od sledecih opcija:");
 			System.out.println("1-Test za samoprocenu");
 			System.out.println("2-Podaci o poslednjem testu samoprocene");
@@ -135,14 +134,6 @@ public class Klijent {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			try {
-				if(soketZaKomunikaciju!=null)
-				soketZaKomunikaciju.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			System.out.println("SERVER JE PAO!");
 			e.printStackTrace();
 		}
 	}
@@ -153,7 +144,6 @@ private static void adminoveOpcije() throws IOException {
 		System.out.println("Dobrodosli Admine!");
 		boolean kraj=false;
 		while(!kraj) {
-			System.out.println();
 			System.out.println("Izaberite neku od sledecih opcija:");
 			System.out.println("1-Lista svih korisnika i njihovo stanje");
 			System.out.println("2-Lista pozitivnih korisnika");
@@ -166,28 +156,28 @@ private static void adminoveOpcije() throws IOException {
 			case "1":
 				izlazniTok.println(drugaOpcija);//Ni ne mora svaki put ovako da se salje, jer je svakako mora poslati, moze u opstem slucaju da posalje,a  tek onda case-evi
 				listaSvihKorisnika();
-//				kraj=true;
+				kraj=true;
 				break;
 			case "2":
 				//MORA PRINTLN, NE MOZE SAMO PRINT, NE POPIJE GA LEPO, VIDI TO!
 				izlazniTok.println(drugaOpcija);
 				listaOdredjenihKorisnika();
-//				kraj=true;
+				kraj=true;
 				break;
 			case "3":
 				izlazniTok.println(drugaOpcija);
 				listaOdredjenihKorisnika();
-//				kraj=true;
+				kraj=true;
 				break;
 			case "4":
 				izlazniTok.println(drugaOpcija);
 				listaOdredjenihKorisnika();
-//				kraj=true;
+				kraj=true;
 				break;
 			case "5":
 				izlazniTok.println(drugaOpcija);
 			    statistika();
-//			    kraj=true;//Skloni posle ove samo, mozda cu time da resim to da uvek ostaje vamo i da bira opcije
+			    kraj=true;//Skloni posle ove samo, mozda cu time da resim to da uvek ostaje vamo i da bira opcije
 			    break;
 			// vidi da li ovo skroz prekida izvrsavanje
 			case "6":
