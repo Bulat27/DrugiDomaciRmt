@@ -59,6 +59,7 @@ public class ClientHandler extends Thread{
 			if(klijent.username.equals("Admin")) {
 				izlazniTok.println("admin");
 //				System.out.println("Prosao je Admin");
+				ispisListaPriUlasku();
 				adminoveOpcije();
 			}else {
 			izlazniTok.println("nije admin");
@@ -95,6 +96,54 @@ public class ClientHandler extends Thread{
 		
 	}
 	
+	private void ispisListaPriUlasku() throws IOException {
+		try {
+			GregorianCalendar datumPrethodnogLogina = (GregorianCalendar) (ulazniZaObjekte.readObject());
+			int broj=vratiBrojNovih (datumPrethodnogLogina);
+			String br = String.valueOf(broj);
+			izlazniTok.println(br);
+			for (KlijentPodaci k : Server.listaRegistrovanih) {
+				GregorianCalendar azurnijiDatum = nadjiPoslednjiDatum(k);
+				if(azurnijiDatum==null)continue;//ako nema datum testova, sigurno nece biti ni pozitivan pa se nece ni ispisati
+				if(k.trenutnoStanje.equals("pozitivan") && (azurnijiDatum.after(datumPrethodnogLogina) || azurnijiDatum.equals(datumPrethodnogLogina) )) {
+					izlazniTok.println(k.imeIPrezime);
+					izlazniTok.println(k.email);
+				}
+			}
+			
+		} catch (ClassNotFoundException e) {
+			System.out.println("Greska prilikom prenosa objekta streamom");
+			e.printStackTrace();
+		} 
+		
+	}
+
+	private int vratiBrojNovih(GregorianCalendar datumPrethodnogLogina) {
+		if(datumPrethodnogLogina==null)return 0;
+		int brojac=0;
+		for (KlijentPodaci k : Server.listaRegistrovanih) {
+			GregorianCalendar azurnijiDatum = nadjiPoslednjiDatum(k);
+			if(azurnijiDatum==null)continue;//ako nema datum testova, sigurno nece biti ni pozitivan pa se nece ni ispisati
+			if(k.trenutnoStanje.equals("pozitivan") && (azurnijiDatum.after(datumPrethodnogLogina) || azurnijiDatum.equals(datumPrethodnogLogina) )) {
+				brojac++;
+			}
+		}
+		return brojac;
+	}
+
+	private GregorianCalendar nadjiPoslednjiDatum(KlijentPodaci k) {
+		GregorianCalendar datumBrzog = k.brziTest.getDatum();
+		GregorianCalendar datumPCR = k.pcrTest.getDatum();
+		if(datumBrzog==null)return datumPCR;
+		if(datumPCR==null)return datumBrzog;
+		if(datumBrzog.after(datumPCR)) {
+			return datumBrzog;
+		}else {
+			return datumPCR;
+		}
+		
+	}
+
 	private void adminoveOpcije() throws IOException {
 		String drugaOpcija =ulazniTok.readLine();
 		switch (drugaOpcija) {

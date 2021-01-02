@@ -2,6 +2,7 @@ package glavni;
 
 import java.io.Serializable;
 
+
 public class KlijentPodaci implements Serializable{
 	
 	/**
@@ -22,6 +23,7 @@ public class KlijentPodaci implements Serializable{
 	PCRtest pcrTest;
 	String trenutnoStanje;//u sustisni stanje poslednjeg uradjenog testa, moze biti pozitivan, negativan i pod nadzorom
 //	BrziTest brziTest;
+//    GregorianCalendar datumPoslednjegLogina;// za sad mi treba samo za admina, mada mozda moze da se iskoristi i za obicnog korisnika
 	
 	//mozda sam mogao i sve atribute ovde da naguram, ali nije lose ovako sa testovima, bila bi dobra praksa i napraviti neki interfejs za tu trojicu pa onda neke fje napraviti
 	//kao zajednicke
@@ -64,6 +66,8 @@ public class KlijentPodaci implements Serializable{
 		this.brziTest=brziTest;
 		this.pcrTest = pcRtest;
 		this.trenutnoStanje=trenutnoStanje;
+//		this.datumPoslednjegLogina=datumPoslednjegLogina;
+		
 	}
 	
 	

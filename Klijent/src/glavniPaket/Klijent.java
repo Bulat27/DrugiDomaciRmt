@@ -1,6 +1,10 @@
 package glavniPaket;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -10,6 +14,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
+
+
+
+
 
 public class Klijent {
 	
@@ -132,6 +140,7 @@ public class Klijent {
 
 private static void adminoveOpcije() throws IOException {
 		//prvo treba odma da mu se ispisu sve liste koje ima u onom zahtevu, to cu posle
+		ispisListaPriUlasku();
 		System.out.println("Dobrodosli Admine!");
 		boolean kraj=false;
 		while(!kraj) {
@@ -182,6 +191,68 @@ private static void adminoveOpcije() throws IOException {
 			}
 			}
 		
+	}
+
+	private static void ispisListaPriUlasku() throws IOException {
+		GregorianCalendar datumPrethodnogLogina = ucitajDatum();
+		GregorianCalendar datumSadasnjegLogina =  new GregorianCalendar();
+		upisiDatum(datumSadasnjegLogina);
+//		if(datumPrethodnogLogina==null) {
+//			System.out.println("Ovo je vas prvi log in, tako da nema novih pozitivnih");
+//		}else {
+			izlazniZaObjekte.writeObject(datumPrethodnogLogina);// vidi da li null prolazi kroz tok ili nista ne posalje
+			String prijem = ulazniTok.readLine();
+			int broj = Integer.valueOf(prijem);
+			LinkedList<KlijentPodaciZaAdmina> podaci = new LinkedList<>();
+			for (int i = 0; i < broj; i++) {
+				String imePrezime = ulazniTok.readLine();
+				String email = ulazniTok.readLine();
+//				String trenutnoStanje = ulazniTok.readLine();
+				KlijentPodaciZaAdmina k = new KlijentPodaciZaAdmina(imePrezime, email, null);//nije bitno necu mu ni pristupati
+				podaci.add(k);
+			}
+			if(podaci.isEmpty()) {
+				System.out.println("Trenutno nema novih pozitivnih korisnika");
+			}else {
+			int brojac =1;
+			for (KlijentPodaciZaAdmina k : podaci) {
+				System.out.println(brojac+". "+ k.toStringBezStanja());
+				brojac++;
+			}
+			}
+		//}
+}
+
+	private static GregorianCalendar ucitajDatum() {
+		GregorianCalendar datum=null;
+		try(FileInputStream fIn= new FileInputStream("datum.dat");
+				BufferedInputStream bIn = new BufferedInputStream(fIn);
+				ObjectInputStream in =new ObjectInputStream(bIn);	
+					){
+				//listaRegistrovanih.clear(); , nisam siguran da li mi treba ovo, svj nece nista ostati unutra jer se ovo radi samo pri pokretanju servera
+			 datum = (GregorianCalendar) (in.readObject());
+				
+				
+			}catch(Exception e) {
+				System.out.println("Greska prilikom citanja datuma admina");
+//				e.printStackTrace();
+			}
+		return datum;
+	}
+	private static void upisiDatum(GregorianCalendar datum) {
+		try(FileOutputStream fOut = new FileOutputStream("datum.dat");
+			BufferedOutputStream bOut = new BufferedOutputStream(fOut);
+			ObjectOutputStream out = new ObjectOutputStream(bOut);	
+					){
+//				for (int i = 0; i < Server.listaRegistrovanih.size(); i++) {
+//					out.writeObject(Server.listaRegistrovanih.get(i));
+//				}
+			out.writeObject(datum);
+				
+			}catch (Exception e) {
+				System.out.println("Greska prilikom serijalizacije datuma"+ e.getMessage());
+				e.printStackTrace();
+			}
 	}
 
 	private static void listaOdredjenihKorisnika() throws IOException {

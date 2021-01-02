@@ -1,0 +1,75 @@
+package glavni;
+
+import java.io.Serializable;
+import java.util.GregorianCalendar;
+
+public class KlijentPodaci implements Serializable{
+	
+	/**
+	 * 
+	 *///ovo sam morao da mi ne bi bacao Exception kad cita bazu, bas zajeban bag, nadam se da valja ovo
+	private static final long serialVersionUID = -9147314537750526354L;
+	/**
+	 * 
+	 */
+
+	String username;
+	String lozinka;
+	String imeIPrezime;
+	String pol;
+	String email;
+	TestSamoprocene testSamoprocene;
+	BrziTest brziTest;
+	PCRtest pcrTest;
+	String trenutnoStanje;//u sustisni stanje poslednjeg uradjenog testa, moze biti pozitivan, negativan i pod nadzorom
+//	BrziTest brziTest;
+    GregorianCalendar datumPoslednjegLogina;// za sad mi treba samo za admina, mada mozda moze da se iskoristi i za obicnog korisnika
+	
+	//mozda sam mogao i sve atribute ovde da naguram, ali nije lose ovako sa testovima, bila bi dobra praksa i napraviti neki interfejs za tu trojicu pa onda neke fje napraviti
+	//kao zajednicke
+	
+//	public KlijentPodaci(String username, String lozinka, String imeIPrezime, String pol, String email,
+//			TestSamoprocene testSamoprocene, BrziTest brziTest) {
+//		super();
+//		this.username = username;
+//		this.lozinka = lozinka;
+//		this.imeIPrezime = imeIPrezime;
+//		this.pol = pol;
+//		this.email = email;
+//		this.testSamoprocene = testSamoprocene;
+//		this.brziTest = brziTest;
+//	}
+
+
+	
+	
+
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof KlijentPodaci)) {
+			return false;
+		}
+		KlijentPodaci k = (KlijentPodaci) (obj);
+		return username.equals(k.username);// Glupo je razlikovati ih po lozinci, nesigurno je, a po ime i prezime moze da bude isto, takod a cemo za sad po username-u
+	}
+
+
+
+	public KlijentPodaci(String username, String lozinka, String imeIPrezime, String pol, String email,TestSamoprocene testSamoprocene,BrziTest brziTest,PCRtest pcRtest,String trenutnoStanje) {
+		super();
+		this.username = username;
+		this.lozinka = lozinka;
+		this.imeIPrezime = imeIPrezime;
+		this.pol = pol;
+		this.email = email;
+		this.testSamoprocene=testSamoprocene;
+		this.brziTest=brziTest;
+		this.pcrTest = pcRtest;
+		this.trenutnoStanje=trenutnoStanje;
+		
+	}
+	
+	
+	
+	
+}
