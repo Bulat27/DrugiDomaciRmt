@@ -220,10 +220,6 @@ public class ClientHandler extends Thread{
 		
 	}
 
-	
-	
-	
-	
 	private int vratiBrojNovih(GregorianCalendar datumPrethodnogLogina) {
 		if(datumPrethodnogLogina==null)return 0;
 		int brojac=0;
@@ -396,20 +392,20 @@ public class ClientHandler extends Thread{
 //			azurirajStatistiku();
 			klijent.testSamoprocene.setStatus("dalje testiranje");// Ovde sam stavio dalje testiranje, da bih sklonio iz nadzora, podrazumevam da ce odraditi neki test(PCR ili brzi), sto znaci da je krenuo u dalja testiranja i da vise nije pod nadzorom
 			serijalizuj();// mora posle svake promene da se radi!
-//			boolean kraj =false;
-//			while(!kraj) {
+			boolean kraj =false;
+			while(!kraj) {
 			String trecaOpcija =ulazniTok.readLine();
 			switch (trecaOpcija) {
 			case "1":
-//				if(!smeBrzi()) {
-//					break;
-//				}
+				if(!smeBrzi()) {
+					break;
+				}
 				brziTest();
-//				kraj=true;
+				kraj=true;
 				break;
 			case "2":
 				PCRtest();
-//				kraj=true;
+				kraj=true;
 				break;
 			case "3":
 				soketZaKomunikaciju.close();
@@ -419,11 +415,10 @@ public class ClientHandler extends Thread{
 				//break;
 			case "4":
 				obaTesta();
-//				kraj=true;
 				//PCR i brzi, videcu kako cu to
 				break;
 			}
-			//}
+			}
 		}else {
 			if(klijent.testSamoprocene.getBrojac()%2==0) {// ako je taj prvi test, ide pod nadzor, ako je drugi, onda izlazi iz nadzora i vodi se kao negativan
 				//Ako oce opet da ulazi, onda opet ima priliku da udje pod nadzor
@@ -442,22 +437,22 @@ public class ClientHandler extends Thread{
 		return false;
 	}
 
-//	private boolean smeBrzi() {
-//	GregorianCalendar datumLogina = new GregorianCalendar();
-//	GregorianCalendar danPosle = klijent.brziTest.getDatum();
-//	// ako je ovo null, znaci da nije do sad radio test samoprocene i da sigurno moze da ga radi
-//	if(danPosle==null) {
-//		izlazniTok.println("sme");
-//		return true;
-//	}
-//	danPosle.add(GregorianCalendar.MINUTE, 1);//radi provere dodajem minut
-//	if(datumLogina.after(danPosle)) {
-//		izlazniTok.println("sme");
-//		return true;
-//	}
-//	izlazniTok.println("ne sme");
-//	return false;
-//	}
+	private boolean smeBrzi() {
+	GregorianCalendar datumLogina = new GregorianCalendar();
+	GregorianCalendar danPosle = klijent.brziTest.getDatum();
+	// ako je ovo null, znaci da nije do sad radio test samoprocene i da sigurno moze da ga radi
+	if(danPosle==null) {
+		izlazniTok.println("sme");
+		return true;
+	}
+	danPosle.add(GregorianCalendar.MINUTE, 1);//radi provere dodajem minut
+	if(datumLogina.after(danPosle)) {
+		izlazniTok.println("sme");
+		return true;
+	}
+	izlazniTok.println("ne sme");
+	return false;
+	}
 
 //	private void azurirajStatistiku() {
 //		try(FileOutputStream fOut = new FileOutputStream("statistika.dat");
@@ -538,7 +533,7 @@ public class ClientHandler extends Thread{
 		try {
 			 datumTesta = (GregorianCalendar) ulazniZaObjekte.readObject();
 		} catch (ClassNotFoundException e) {
-			System.out.println("Greska prilikom ucitavanja objekta");
+			System.out.println("Greska prilikom ucitvanja objekta");
 			e.printStackTrace();
 		} 
 		//mislim da u ovom trenutku ne moze biti null jer sam ga napravio kako napravim klijenta, ali videcemo, ako pukne, stavis null proveru pa obradis nekako

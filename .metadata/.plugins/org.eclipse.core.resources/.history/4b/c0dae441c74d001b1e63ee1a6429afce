@@ -396,8 +396,8 @@ public class ClientHandler extends Thread{
 //			azurirajStatistiku();
 			klijent.testSamoprocene.setStatus("dalje testiranje");// Ovde sam stavio dalje testiranje, da bih sklonio iz nadzora, podrazumevam da ce odraditi neki test(PCR ili brzi), sto znaci da je krenuo u dalja testiranja i da vise nije pod nadzorom
 			serijalizuj();// mora posle svake promene da se radi!
-//			boolean kraj =false;
-//			while(!kraj) {
+			boolean kraj =false;
+			while(!kraj) {
 			String trecaOpcija =ulazniTok.readLine();
 			switch (trecaOpcija) {
 			case "1":
@@ -405,11 +405,11 @@ public class ClientHandler extends Thread{
 //					break;
 //				}
 				brziTest();
-//				kraj=true;
+				kraj=true;
 				break;
 			case "2":
 				PCRtest();
-//				kraj=true;
+				kraj=true;
 				break;
 			case "3":
 				soketZaKomunikaciju.close();
@@ -419,11 +419,11 @@ public class ClientHandler extends Thread{
 				//break;
 			case "4":
 				obaTesta();
-//				kraj=true;
+				kraj=true;
 				//PCR i brzi, videcu kako cu to
 				break;
 			}
-			//}
+			}
 		}else {
 			if(klijent.testSamoprocene.getBrojac()%2==0) {// ako je taj prvi test, ide pod nadzor, ako je drugi, onda izlazi iz nadzora i vodi se kao negativan
 				//Ako oce opet da ulazi, onda opet ima priliku da udje pod nadzor

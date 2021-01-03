@@ -501,10 +501,10 @@ private static void adminoveOpcije() throws IOException {
 					case "2":
 						//MORA PRINTLN, NE MOZE SAMO PRINT, NE POPIJE GA LEPO, VIDI TO!
 						izlazniTok.println(trecaOpcija);
-//						if(!daLiSmeTest()) {
-//							System.out.println("Dozvoljen je samo jedan PCR test (u 24 casa), molimo Vas da pokusate kasnije.");
-//							break;
-//						}
+						if(!daLiSmeTest()) {
+							System.out.println("Dozvoljen je samo jedan PCR test (u 24 casa), molimo Vas da pokusate kasnije.");
+							break;
+						}
 						PCRtest();
 						kraj=true;
 						break;
@@ -516,17 +516,17 @@ private static void adminoveOpcije() throws IOException {
 //					System.exit(0);//ovde nije u main-u i onda nece return da radi posao
 					case "4"://ovde ga svejedno zavrsavam jer ako ne moze oba, ne treba vise da bude u ovom delu menija, nego ide u glavni, a ako uradi oba opet treba da ide u glavni
 						izlazniTok.println(trecaOpcija);
-						obaTesta();
-//						if(daLiSmeTest()) {
-//							brziTest();
-//						}else {
-//							System.out.println("Dozvoljen je samo jedan brzi test (u 24 casa), molimo Vas da pokusate kasnije.");
-//						}
-//						if(daLiSmeTest()) {
-//							PCRtest();
-//						}else {
-//							System.out.println("Dozvoljen je samo jedan PCR test (u 24 casa), molimo Vas da pokusate kasnije.");
-//						}
+//						obaTesta();
+						if(daLiSmeTest()) {
+							brziTest();
+						}else {
+							System.out.println("Dozvoljen je samo jedan brzi test (u 24 casa), molimo Vas da pokusate kasnije.");
+						}
+						if(daLiSmeTest()) {
+							PCRtest();
+						}else {
+							System.out.println("Dozvoljen je samo jedan PCR test (u 24 casa), molimo Vas da pokusate kasnije.");
+						}
 						kraj=true;
 						break;
 					// vidi da li ovo skroz prekida izvrsavanje
