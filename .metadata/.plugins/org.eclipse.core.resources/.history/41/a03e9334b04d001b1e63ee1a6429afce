@@ -74,8 +74,10 @@ public class ClientHandler extends Thread{
 			switch (drugaOpcija) {
 			case "1":
 				if(!smeSamoprocena()) {
+					izlazniTok.println("ne sme");
 					break;
 				}
+				izlazniTok.println("sme");
 				boolean prekid =testSamoprocene();
 				if(prekid)return;
 				break;
@@ -107,23 +109,6 @@ public class ClientHandler extends Thread{
 		
 	}
 	
-	private boolean smeSamoprocena() {
-		GregorianCalendar datumLogina = new GregorianCalendar();
-		GregorianCalendar danPosle = klijent.testSamoprocene.getDatum();
-		// ako je ovo null, znaci da nije do sad radio test samoprocene i da sigurno moze da ga radi
-		if(danPosle==null) {
-			izlazniTok.println("sme");
-			return true;
-		}
-		danPosle.add(GregorianCalendar.MINUTE, 1);//radi provere dodajem minut
-		if(datumLogina.after(danPosle)) {
-			izlazniTok.println("sme");
-			return true;
-		}
-		izlazniTok.println("ne sme");
-		return false;
-	}
-
 	private void ispisListaPriUlasku2() throws IOException {
 		try {
 			GregorianCalendar datumLogina = (GregorianCalendar) (ulazniZaObjekte.readObject());
