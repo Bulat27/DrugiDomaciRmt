@@ -60,6 +60,7 @@ public class ClientHandler extends Thread{
 				izlazniTok.println("admin");
 //				System.out.println("Prosao je Admin");
 				ispisListaPriUlasku();
+				ispisListaPriUlasku2();
 				adminoveOpcije();
 			}else {
 			izlazniTok.println("nije admin");
@@ -72,7 +73,8 @@ public class ClientHandler extends Thread{
 			String drugaOpcija =ulazniTok.readLine();
 			switch (drugaOpcija) {
 			case "1":
-				testSamoprocene();
+				boolean prekid =testSamoprocene();
+				if(prekid)return;
 				break;
 			case "2":
 				pregledPoslednjeSamoprocene();
@@ -102,6 +104,44 @@ public class ClientHandler extends Thread{
 		
 	}
 	
+	private void ispisListaPriUlasku2() throws IOException {
+		try {
+			GregorianCalendar datumLogina = (GregorianCalendar) (ulazniZaObjekte.readObject());
+			
+			int broj=vratiBrojPotrebnih (datumLogina);
+			String br = String.valueOf(broj);
+			izlazniTok.println(br);
+			for (KlijentPodaci k : Server.listaRegistrovanih) {
+				GregorianCalendar minutPosle = k.testSamoprocene.getDatum();
+				if(minutPosle==null)continue;
+				minutPosle.add(GregorianCalendar.MINUTE, 1);
+				if(k.trenutnoStanje.equals("pod nadzorom") && datumLogina.after(minutPosle)) {
+					izlazniTok.println(k.imeIPrezime);
+					izlazniTok.println(k.email);
+				}
+			}
+			
+		} catch (ClassNotFoundException e) {
+			System.out.println("Greska prilikom prenosa objekta streamom");
+			e.printStackTrace();
+		} 
+		
+	}
+
+	private int vratiBrojPotrebnih(GregorianCalendar datumLogina) {
+		if(datumLogina==null)return 0;
+		int brojac = 0;
+		for (KlijentPodaci k : Server.listaRegistrovanih) {// ako je pod nadzorom, ne moze datum samoprocene biti null
+			GregorianCalendar minutPosle = k.testSamoprocene.getDatum();
+			if(minutPosle==null)continue;
+			minutPosle.add(GregorianCalendar.MINUTE, 1);
+			if(k.trenutnoStanje.equals("pod nadzorom") && datumLogina.after(minutPosle)) {
+				brojac++;
+			}
+		}
+		return brojac;
+	}
+
 	private void proveraPodNadzorom() throws IOException {
 //		if(klijent.trenutnoStanje.equals("pod nadzorom") && prosaoDatum()) {
 //			izlazniTok.println("obavezna samoprocena");
@@ -122,7 +162,7 @@ public class ClientHandler extends Thread{
 		try {
 			GregorianCalendar datumLogina = (GregorianCalendar) ulazniZaObjekte.readObject();
 			GregorianCalendar danPosle = klijent.testSamoprocene.getDatum();//ovo ovde ne moze biti null, jer ovde dolazi samo ako je pod nadzorom, a to znaci da je morao uraditi test samoprocene vec
-			if(danPosle!=null)danPosle.add(GregorianCalendar.MINUTE, 1);
+			if(danPosle!=null)danPosle.add(GregorianCalendar.MINUTE, 1);//Pomeram za minut da bi mogao da pokazem funkcionalnost, u realnosti bi bilo npr. nedelju dana ili tako nesto
 			if(datumLogina.after(danPosle)) {
 				return true;
 			}else {
@@ -312,7 +352,7 @@ public class ClientHandler extends Thread{
 		
 	}
 
-	private void testSamoprocene() throws IOException {
+	private boolean testSamoprocene() throws IOException {
 		GregorianCalendar datumSamoProcene=null;
 		try {
 			 datumSamoProcene = (GregorianCalendar) ulazniZaObjekte.readObject();
@@ -330,7 +370,7 @@ public class ClientHandler extends Thread{
 		if(dalje.equals("jos testova")) {
 //			Server.statistika.povecajBrojTestiranja();
 //			azurirajStatistiku();
-			klijent.testSamoprocene.setStatus("dalje testiranje");
+			klijent.testSamoprocene.setStatus("dalje testiranje");// Ovde sam stavio dalje testiranje, da bih sklonio iz nadzora, podrazumevam da ce odraditi neki test(PCR ili brzi), sto znaci da je krenuo u dalja testiranja i da vise nije pod nadzorom
 			serijalizuj();// mora posle svake promene da se radi!
 			String trecaOpcija =ulazniTok.readLine();
 			switch (trecaOpcija) {
@@ -342,6 +382,7 @@ public class ClientHandler extends Thread{
 				break;
 			case "3":
 				soketZaKomunikaciju.close();
+				return true;
 //				return;//vidi da li ce ovo lepo prekinuti, mozda systemexit(0)? Ovde ne radi posao, prekida sao ovu metodu, a ne celu run metodu
 //				System.exit(0);
 				//break;
@@ -366,7 +407,7 @@ public class ClientHandler extends Thread{
 			klijent.testSamoprocene.povecajBrojac();
 			serijalizuj();
 		}
-		
+		return false;
 	}
 
 //	private void azurirajStatistiku() {

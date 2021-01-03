@@ -27,6 +27,7 @@ public class Klijent {
 	static BufferedReader tastatura = null;
 	static ObjectOutputStream izlazniZaObjekte=null;
 	static ObjectInputStream ulazniZaObjekte=null;
+	 
 	
 	public static void main(String[] args) {
 		try {
@@ -108,10 +109,20 @@ public class Klijent {
 			System.out.println("5-Podaci o poslednjem PCR testu");
 //			String drugaOpcija=tastatura.readLine();
 			String drugaOpcija = moraSamprocena ? "1":tastatura.readLine();
+			if(moraSamprocena) {
+				System.out.println();
+				System.out.println("S obzirom da ste pod nadzorom, ne mozete birati izmedju opcija pre nego sto ponovite test samoprocene!");
+				System.out.println();
+			}
 			switch (drugaOpcija) {
 			case "1":
 				izlazniTok.println(drugaOpcija);//Ni ne mora svaki put ovako da se salje, jer je svakako mora poslati, moze u opstem slucaju da posalje,a  tek onda case-evi
-				testSamoprocene();
+				if(!daLiSmeTest()) {
+					System.out.println("Dozvoljen je samo jedan test samoprocene dnevno (u 24 casa), molimo Vas da pokusate kasnije.");
+					break;
+				}
+				boolean prekini=testSamoprocene();
+				if(prekini)return;
 				moraSamprocena=false;
 //				kraj=true;
 				break;
@@ -178,8 +189,12 @@ public class Klijent {
 
 private static void adminoveOpcije() throws IOException {
 		//prvo treba odma da mu se ispisu sve liste koje ima u onom zahtevu, to cu posle
+		System.out.println("Lista novih pozitivnih:");
 		ispisListaPriUlasku();
-		System.out.println("Dobrodosli Admine!");
+		System.out.println();
+		System.out.println("Lista korisnika koji su pod nadzorom i nisu odradili novi test samoprocene u predvidjenom vremenu");
+		ispisListaPriUlasku2();
+		System.out.println();
 		boolean kraj=false;
 		while(!kraj) {
 			System.out.println();
@@ -193,7 +208,7 @@ private static void adminoveOpcije() throws IOException {
 			String drugaOpcija=tastatura.readLine();
 			switch (drugaOpcija) {
 			case "1":
-				izlazniTok.println(drugaOpcija);//Ni ne mora svaki put ovako da se salje, jer je svakako mora poslati, moze u opstem slucaju da posalje,a  tek onda case-evi
+				izlazniTok.println(drugaOpcija);//Ni ne mora svaki put ovako da se salje, jer je svakako mora poslati, moze u opstem slucaju da posalje,a tek onda case-evi
 				listaSvihKorisnika();
 //				kraj=true;
 				break;
@@ -231,6 +246,39 @@ private static void adminoveOpcije() throws IOException {
 			}
 		
 	}
+
+	
+	private static boolean daLiSmeTest() throws IOException {
+		String sme = ulazniTok.readLine();
+		if(sme.equals("sme"))return true;
+		return false;
+	}
+	
+
+	private static void ispisListaPriUlasku2() throws IOException {
+		GregorianCalendar datumLogina = new GregorianCalendar();
+		izlazniZaObjekte.writeObject(datumLogina);
+		String prijem = ulazniTok.readLine();
+		int broj = Integer.valueOf(prijem);
+		LinkedList<KlijentPodaciZaAdmina> podaci = new LinkedList<>();
+		for (int i = 0; i < broj; i++) {
+			String imePrezime = ulazniTok.readLine();
+			String email = ulazniTok.readLine();
+//			String trenutnoStanje = ulazniTok.readLine();
+			KlijentPodaciZaAdmina k = new KlijentPodaciZaAdmina(imePrezime, email, null);//nije bitno necu mu ni pristupati
+			podaci.add(k);
+		}
+		if(podaci.isEmpty()) {
+			System.out.println("Trenutno nema novih korisnika sa statusom pod nadzorom koji se nisu testirali u predvidjenom roku");
+		}else {
+		int brojac =1;
+		for (KlijentPodaciZaAdmina k : podaci) {
+			System.out.println(brojac+". "+ k.toStringBezStanja());
+			brojac++;
+		}
+		}
+	
+}
 
 	private static void ispisListaPriUlasku() throws IOException {
 		GregorianCalendar datumPrethodnogLogina = ucitajDatum();
@@ -414,7 +462,7 @@ private static void adminoveOpcije() throws IOException {
 	}
 
 
-	private static void testSamoprocene() throws IOException {// vidi za exception
+	private static boolean testSamoprocene() throws IOException {// vidi za exception
 		int brojac=0;// ovde cu da prebrojim, nema potrebe da server sve obradjuje, njega samo zanima dal ih vise od dva ili ne
 		//ovaj deo moze pametnije, ne pada mi nista sada na pamet 
 		GregorianCalendar datumTesta = new GregorianCalendar();
@@ -429,9 +477,56 @@ private static void adminoveOpcije() throws IOException {
 			izlazniTok.println("nemoj dalje");
 		}else {
 			izlazniTok.println("jos testova");
-			pcrIBrzi();
+//			pcrIBrzi();
+			 boolean kraj=false;
+				while(!kraj) {
+					System.out.println("Potrebno je dalje testiranje, molimo Vas izaberite jednu od opcija:");
+					System.out.println("1-Brzi test");
+					System.out.println("2-PCR test");
+					System.out.println("3-Prekid komunikacije");
+					System.out.println("4- Brzi i PCR test");
+					System.out.println();
+					String trecaOpcija=tastatura.readLine();
+					switch (trecaOpcija) {// Ovde ga nisa stavio da se vrti, znaci moze da bira koji ce test, ili oba i to mu je to, nema smisla da se tu vrti vise puta. 
+					//Jedino ako nema mogucnost da uradi neki, vratice se u meni pa moze da bira opet
+					case "1":
+						izlazniTok.println(trecaOpcija);
+						if(!daLiSmeTest()) {
+							System.out.println("Dozvoljen je samo jedan brzi test (u 24 casa), molimo Vas da pokusate kasnije.");
+							break;
+						}
+						brziTest();
+						kraj=true;
+						break;
+					case "2":
+						//MORA PRINTLN, NE MOZE SAMO PRINT, NE POPIJE GA LEPO, VIDI TO!
+						izlazniTok.println(trecaOpcija);
+						if(!daLiSmeTest()) {
+							System.out.println("Dozvoljen je samo jedan PCR test (u 24 casa), molimo Vas da pokusate kasnije.");
+							break;
+						}
+						PCRtest();
+						kraj=true;
+						break;
+					case "3":
+					izlazniTok.println(trecaOpcija);
+					System.out.println("Dovidjenja");
+					soketZaKomunikaciju.close();
+					return true;
+//					System.exit(0);//ovde nije u main-u i onda nece return da radi posao
+					case "4":
+						izlazniTok.println(trecaOpcija);
+						obaTesta();
+						kraj=true;
+						break;
+					// vidi da li ovo skroz prekida izvrsavanje
+					default:
+						System.out.println("Molimo Vas izaberite validnu opciju");
+						break;// mislim da ovaj break nije ni potreban
+					}
+					}
 		}
-		
+		return false;
 	}
 	private static void pcrIBrzi() throws IOException {
 		 boolean kraj=false;
