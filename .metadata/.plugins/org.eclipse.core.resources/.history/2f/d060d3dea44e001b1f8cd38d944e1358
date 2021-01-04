@@ -1,0 +1,113 @@
+package glavni;
+
+import java.io.BufferedInputStream;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.LinkedList;
+
+public class Server {
+	
+	public static LinkedList<KlijentPodaci> listaRegistrovanih=new LinkedList<>();//mora cu svaki put da je ucitivam iz tog fajla, ali necu ovu listu ipak, nego onu listu sa Klijent Podaci
+	// Korisnici nezavisno rade, tako da mi nije bitno koji su trenutno ulogovani
+	
+//	 public static Statistika statistika = new Statistika(0, 0, 0, 0);
+	
+	public static void main(String[] args) {
+		
+		ucitajListuIzFajla();
+//		ucitajStatistiku();
+		ispisiListu();//ovo je debug fora
+		int port = 9027;
+		ServerSocket serverSoket=null;
+		Socket soketZaKomunikaciju=null;
+		
+		
+		try {
+			serverSoket  = new ServerSocket(port);
+			
+			while(true) {
+				System.out.println(">>>Cekam na konekciju");
+				soketZaKomunikaciju = serverSoket.accept();
+				System.out.println(">>>Doslo je do konekcije");
+				
+				ClientHandler klijent = new ClientHandler(soketZaKomunikaciju);
+//				listaUlogovanih.add(klijent);
+				klijent.start();
+				
+				
+			}
+			
+			
+			
+			
+		} catch (IOException e) {//Malo bolje odradi ovaj exception, vidi tacno sta je i to
+			System.out.println("Greska prilikom pokretanja servera");
+		}
+		
+		
+	}
+
+	
+	
+	
+	
+//	private static void ucitajStatistiku() {
+//		try(FileInputStream fIn= new FileInputStream("statistika.dat");
+//				BufferedInputStream bIn = new BufferedInputStream(fIn);
+//				ObjectInputStream in =new ObjectInputStream(bIn);	
+//					){
+//				
+////			statistika = (Statistika)(in.readObject());
+//				
+//			}catch(Exception e) {
+//				System.out.println("Greska prilikom citanja statistike");
+////				e.printStackTrace();
+//			}
+//		
+//	}
+
+
+
+
+
+	private static void ispisiListu() {
+		for (KlijentPodaci klijentPodaci : listaRegistrovanih) {
+			System.out.println(klijentPodaci.username);
+		}
+		
+	}
+
+
+
+
+
+	private static void ucitajListuIzFajla() {// vidi da li radi kada su klijenti jedan za drugim!!!!!, trebalo bi da da
+		try(FileInputStream fIn= new FileInputStream("baza.dat");
+			BufferedInputStream bIn = new BufferedInputStream(fIn);
+			ObjectInputStream in =new ObjectInputStream(bIn);	
+				){
+			//listaRegistrovanih.clear(); , nisam siguran da li mi treba ovo, svj nece nista ostati unutra jer se ovo radi samo pri pokretanju servera
+			try {
+				while(true) {
+					KlijentPodaci k = (KlijentPodaci) (in.readObject());
+					listaRegistrovanih.add(k);
+				}
+				
+			} catch (EOFException e) {
+				// TODO: handle exception
+			}
+			
+		}catch(Exception e) {
+			System.out.println("Greska prilikom citanja baze");
+//			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+}

@@ -97,10 +97,23 @@ public class ClientHandler extends Thread{
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("GRIJESKA");
+//			System.out.println("GRIJESKA");
 			
-			e.printStackTrace();// ovo posle izbrisi
+//			e.printStackTrace();// ovo posle izbrisi
 			System.out.println("Klijent se nasilno iskljucio");
+		}finally {
+//			System.out.println("Izvrsio se finally");
+				try {
+					if(izlazniTok!=null)izlazniTok.close();
+					if(ulazniTok!=null)ulazniTok.close();
+					if(izlazniZaObjekte!=null)izlazniZaObjekte.close();
+					if(ulazniZaObjekte!=null)ulazniZaObjekte.close();
+					if(soketZaKomunikaciju!=null && !soketZaKomunikaciju.isClosed()) {
+						soketZaKomunikaciju.close();
+					}
+				} catch (IOException e) {
+					System.out.println("Greska prilikom zatvaranja streamova");
+				}
 		}
 		
 		
@@ -384,7 +397,7 @@ public class ClientHandler extends Thread{
 			 datumSamoProcene = (GregorianCalendar) ulazniZaObjekte.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("PROBLEM SAM CITANJEM OBJEKTA");
-			e.printStackTrace();
+//			e.printStackTrace();
 		} 
 		if(klijent.testSamoprocene==null)klijent.testSamoprocene = new TestSamoprocene(null, null,0);//mislim da ovo ovde nije neophodno
 		klijent.testSamoprocene.setDatum(datumSamoProcene);
@@ -489,7 +502,7 @@ public class ClientHandler extends Thread{
 			 datumTesta = (GregorianCalendar) ulazniZaObjekte.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("Greska prilikom ucitavanja objekta");
-			e.printStackTrace();
+//			e.printStackTrace();
 		} 
 		//mislim da u ovom trenutku ne moze biti null jer sam ga napravio kako napravim klijenta, ali videcemo, ako pukne, stavis null proveru pa obradis nekako
 		klijent.pcrTest.setDatum(datumTesta);
@@ -541,7 +554,7 @@ public class ClientHandler extends Thread{
 			 datumTesta = (GregorianCalendar) ulazniZaObjekte.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("Greska prilikom ucitavanja objekta");
-			e.printStackTrace();
+//			e.printStackTrace();
 		} 
 		//mislim da u ovom trenutku ne moze biti null jer sam ga napravio kako napravim klijenta, ali videcemo, ako pukne, stavis null proveru pa obradis nekako
 		klijent.brziTest.setDatum(datumTesta);
@@ -575,7 +588,7 @@ public class ClientHandler extends Thread{
 				
 			}catch (Exception e) {
 				System.out.println("Greska prilikom serijalizacije"+ e.getMessage());
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		
 	}
@@ -665,7 +678,7 @@ public class ClientHandler extends Thread{
 			
 		}catch (Exception e) {
 			System.out.println("Greska prilikom serijalizacije"+ e.getMessage());
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		
 	}

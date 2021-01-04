@@ -158,19 +158,35 @@ public class Klijent {
 		}
 			
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Problem sa serverom");
+//			soketZaKomunikaciju.close();
+//			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			try {
-				if(soketZaKomunikaciju!=null)
-				soketZaKomunikaciju.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+//			try {
+//				if(soketZaKomunikaciju!=null)
+//				soketZaKomunikaciju.close();
+//			} catch (IOException e1) {
+//				// TODO Auto-generated catch block
+////				e1.printStackTrace();
+//			}
 			System.out.println("SERVER JE PAO!");
-			e.printStackTrace();
+//			e.printStackTrace();
+		}finally {
+				try {
+					if(tastatura!=null)tastatura.close();
+					if(ulazniTok!=null )ulazniTok.close();
+					if(izlazniTok!=null)izlazniTok.close();
+					if(ulazniZaObjekte!=null)ulazniZaObjekte.close();
+					if(izlazniZaObjekte!=null)izlazniZaObjekte.close();
+					if(soketZaKomunikaciju!=null && !soketZaKomunikaciju.isClosed()) {
+						soketZaKomunikaciju.close();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+//					e.printStackTrace();
+					System.out.println("Problem sa zatvaranjem streamova");
+				}
 		}
 	}
 
@@ -250,7 +266,7 @@ private static void adminoveOpcije() throws IOException {
 	
 	private static boolean daLiSmeTest() throws IOException {
 		String sme = ulazniTok.readLine();
-		if(sme.equals("sme"))return true;
+		if(sme!=null && sme.equals("sme"))return true;
 		return false;
 	}
 	
@@ -338,7 +354,7 @@ private static void adminoveOpcije() throws IOException {
 				
 			}catch (Exception e) {
 				System.out.println("Greska prilikom serijalizacije datuma"+ e.getMessage());
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 	}
 
@@ -419,8 +435,8 @@ private static void adminoveOpcije() throws IOException {
 				System.out.println("Datum poslednjeg PCR testa: "+ datum.getTime() +" Status: "+ status );
 			}
 		} catch (ClassNotFoundException e) {
-			System.out.println("Neka greska sa objektom");
-			e.printStackTrace();
+			System.out.println("Greska prilikom citanja objekta");
+//			e.printStackTrace();
 		} 
 		
 	}
@@ -436,8 +452,8 @@ private static void adminoveOpcije() throws IOException {
 				System.out.println("Datum poslednjeg brzog testa: "+ datum.getTime() +" Status: "+ status );//Treba preraditi format ispisa datuma, ta bude srp
 			}
 		} catch (ClassNotFoundException e) {
-			System.out.println("Neka greska sa objektom");
-			e.printStackTrace();
+			System.out.println("Greska prilikom citanja objekta");
+//			e.printStackTrace();
 		} 
 		
 		
@@ -454,8 +470,8 @@ private static void adminoveOpcije() throws IOException {
 				System.out.println("Datum poslednje samoprocene: "+ datum.getTime() +" Status: "+ status );
 			}
 		} catch (ClassNotFoundException e) {
-			System.out.println("Neka greska sa objektom");
-			e.printStackTrace();
+			System.out.println("Greska prilikom citanja objekta");
+//			e.printStackTrace();
 		} 
 		
 		
@@ -603,7 +619,7 @@ private static void adminoveOpcije() throws IOException {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Greska prilikom sleep-a");// vidi da li treba jos nekako da se obradjuje ovaj Exception
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		System.out.println("Trenutno stanje PCR testa je: "+stanje2);
 		
@@ -612,7 +628,7 @@ private static void adminoveOpcije() throws IOException {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Greska prilikom sleep-a");
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		System.out.println("Trenutno stanje PCR testa je: "+stanje3);
 		

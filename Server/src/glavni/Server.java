@@ -75,6 +75,7 @@ public class Server {
 
 
 	private static void ispisiListu() {
+		System.out.println("Trenutni korisnici u bazi:");
 		for (KlijentPodaci klijentPodaci : listaRegistrovanih) {
 			System.out.println(klijentPodaci.username);
 		}
@@ -102,8 +103,9 @@ public class Server {
 			}
 			
 		}catch(Exception e) {
-			System.out.println("Greska prilikom citanja baze");
+//			System.out.println("Greska prilikom citanja baze");
 //			e.printStackTrace();
+			System.out.println("Baza je trenutno prazna");
 		}
 		
 	}
