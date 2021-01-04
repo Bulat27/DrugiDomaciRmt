@@ -108,13 +108,13 @@ public class ClientHandler extends Thread{
 	}
 	
 	private boolean smeSamoprocena() {
-		if(klijent.testSamoprocene.getDatum()==null) {// ako je ovo null, znaci da nije do sad radio test samoprocene i da sigurno moze da ga radi
+		GregorianCalendar datumLogina = new GregorianCalendar();
+		GregorianCalendar danPosle = klijent.testSamoprocene.getDatum();
+		// ako je ovo null, znaci da nije do sad radio test samoprocene i da sigurno moze da ga radi
+		if(danPosle==null) {
 			izlazniTok.println("sme");
 			return true;
 		}
-		GregorianCalendar datumLogina = new GregorianCalendar();
-		GregorianCalendar danPosle =(GregorianCalendar) klijent.testSamoprocene.getDatum().clone();
-		
 		danPosle.add(GregorianCalendar.MINUTE, 1);//radi provere dodajem minut
 		if(datumLogina.after(danPosle)) {
 			izlazniTok.println("sme");
@@ -183,7 +183,7 @@ public class ClientHandler extends Thread{
 	private boolean prosaoDatum() throws IOException {
 		try {
 			GregorianCalendar datumLogina = (GregorianCalendar) ulazniZaObjekte.readObject();
-			GregorianCalendar danPosle =(GregorianCalendar) klijent.testSamoprocene.getDatum().clone();//ovo ovde ne moze biti null, jer ovde dolazi samo ako je pod nadzorom, a to znaci da je morao uraditi test samoprocene vec
+			GregorianCalendar danPosle = klijent.testSamoprocene.getDatum();//ovo ovde ne moze biti null, jer ovde dolazi samo ako je pod nadzorom, a to znaci da je morao uraditi test samoprocene vec
 			if(danPosle!=null)danPosle.add(GregorianCalendar.MINUTE, 1);//Pomeram za minut da bi mogao da pokazem funkcionalnost, u realnosti bi bilo npr. nedelju dana ili tako nesto
 			if(datumLogina.after(danPosle)) {
 				return true;
@@ -301,7 +301,7 @@ public class ClientHandler extends Thread{
 	}
 
 	private void listaSvihKorisnika() {
-		String broj =Server.listaRegistrovanih!=null ? String.valueOf(Server.listaRegistrovanih.size()):"0";//Menjao skoro
+		String broj =Server.listaRegistrovanih!=null ? String.valueOf(Server.listaRegistrovanih.size()):"0";
 		izlazniTok.println(broj);
 		for (KlijentPodaci k : Server.listaRegistrovanih) {
 			izlazniTok.println(k.imeIPrezime);

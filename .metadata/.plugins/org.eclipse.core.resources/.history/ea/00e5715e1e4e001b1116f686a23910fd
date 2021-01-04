@@ -113,8 +113,8 @@ public class ClientHandler extends Thread{
 			return true;
 		}
 		GregorianCalendar datumLogina = new GregorianCalendar();
-		GregorianCalendar danPosle =(GregorianCalendar) klijent.testSamoprocene.getDatum().clone();
-		
+		GregorianCalendar danPosle = klijent.testSamoprocene.getDatum();
+		// ako je ovo null, znaci da nije do sad radio test samoprocene i da sigurno moze da ga radi
 		danPosle.add(GregorianCalendar.MINUTE, 1);//radi provere dodajem minut
 		if(datumLogina.after(danPosle)) {
 			izlazniTok.println("sme");
