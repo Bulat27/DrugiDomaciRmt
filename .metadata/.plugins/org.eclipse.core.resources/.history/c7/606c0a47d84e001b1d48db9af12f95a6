@@ -60,6 +60,7 @@ public class ClientHandler extends Thread{
 				izlazniTok.println("admin");
 //				System.out.println("Prosao je Admin");
 				ispisListaPriUlasku();
+				ispisListaPriUlasku2();
 				adminoveOpcije();
 			}else {
 			izlazniTok.println("nije admin");
@@ -72,7 +73,11 @@ public class ClientHandler extends Thread{
 			String drugaOpcija =ulazniTok.readLine();
 			switch (drugaOpcija) {
 			case "1":
-				testSamoprocene();
+				if(!smeSamoprocena()) {
+					break;
+				}
+				boolean prekid =testSamoprocene();
+				if(prekid)return;
 				break;
 			case "2":
 				pregledPoslednjeSamoprocene();
@@ -92,16 +97,86 @@ public class ClientHandler extends Thread{
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("GRIJESKA");
+//			System.out.println("GRIJESKA");
 			
-			e.printStackTrace();// ovo posle izbrisi
+//			e.printStackTrace();// ovo posle izbrisi
 			System.out.println("Klijent se nasilno iskljucio");
+		}finally {
+//			System.out.println("Izvrsio se finally");
+				try {
+					if(izlazniTok!=null)izlazniTok.close();
+					if(ulazniTok!=null)ulazniTok.close();
+					if(izlazniZaObjekte!=null)izlazniZaObjekte.close();
+					if(ulazniZaObjekte!=null)ulazniZaObjekte.close();
+					if(soketZaKomunikaciju!=null && !soketZaKomunikaciju.isClosed()) {
+						soketZaKomunikaciju.close();
+					}
+				} catch (IOException e) {
+					System.out.println("Greska prilikom zatvaranja streamova");
+				}
 		}
 		
 		
 		
 	}
 	
+	private boolean smeSamoprocena() {
+		if(klijent.testSamoprocene.getDatum()==null) {// ako je ovo null, znaci da nije do sad radio test samoprocene i da sigurno moze da ga radi
+			izlazniTok.println("sme");
+			return true;
+		}
+		GregorianCalendar datumLogina = new GregorianCalendar();
+		GregorianCalendar danPosle =(GregorianCalendar) klijent.testSamoprocene.getDatum().clone();
+		
+		danPosle.add(GregorianCalendar.MINUTE, 1);//radi provere dodajem minut
+		if(datumLogina.after(danPosle)) {
+			izlazniTok.println("sme");
+			return true;
+		}
+		izlazniTok.println("ne sme");
+		return false;
+	}
+
+	private void ispisListaPriUlasku2() throws IOException {
+		try {
+			GregorianCalendar datumLogina = (GregorianCalendar) (ulazniZaObjekte.readObject());
+			
+			int broj=vratiBrojPotrebnih (datumLogina);
+			String br = String.valueOf(broj);
+			izlazniTok.println(br);
+			for (KlijentPodaci k : Server.listaRegistrovanih) {
+				if(k.testSamoprocene.getDatum()==null)continue;
+				GregorianCalendar minutPosle =(GregorianCalendar) k.testSamoprocene.getDatum().clone();
+//				if(minutPosle==null)continue;
+				minutPosle.add(GregorianCalendar.MINUTE, 1);
+				if(k.trenutnoStanje.equals("pod nadzorom") && datumLogina.after(minutPosle)) {
+					izlazniTok.println(k.imeIPrezime);
+					izlazniTok.println(k.email);
+				}
+			}
+			
+		} catch (ClassNotFoundException e) {
+			System.out.println("Greska prilikom prenosa objekta streamom");
+			e.printStackTrace();
+		} 
+		
+	}
+
+	private int vratiBrojPotrebnih(GregorianCalendar datumLogina) {
+		if(datumLogina==null)return 0;
+		int brojac = 0;
+		for (KlijentPodaci k : Server.listaRegistrovanih) {// ako je pod nadzorom, ne moze datum samoprocene biti null
+			if(k.testSamoprocene.getDatum()==null)continue;
+			GregorianCalendar minutPosle =(GregorianCalendar) k.testSamoprocene.getDatum().clone();
+//			if(minutPosle==null)continue;
+			minutPosle.add(GregorianCalendar.MINUTE, 1);
+			if(k.trenutnoStanje.equals("pod nadzorom") && datumLogina.after(minutPosle)) {
+				brojac++;
+			}
+		}
+		return brojac;
+	}
+
 	private void proveraPodNadzorom() throws IOException {
 //		if(klijent.trenutnoStanje.equals("pod nadzorom") && prosaoDatum()) {
 //			izlazniTok.println("obavezna samoprocena");
@@ -121,8 +196,8 @@ public class ClientHandler extends Thread{
 	private boolean prosaoDatum() throws IOException {
 		try {
 			GregorianCalendar datumLogina = (GregorianCalendar) ulazniZaObjekte.readObject();
-			GregorianCalendar danPosle = klijent.testSamoprocene.getDatum();//ovo ovde ne moze biti null, jer ovde dolazi samo ako je pod nadzorom, a to znaci da je morao uraditi test samoprocene vec
-			if(danPosle!=null)danPosle.add(GregorianCalendar.MINUTE, 1);
+			GregorianCalendar danPosle =(GregorianCalendar) klijent.testSamoprocene.getDatum().clone();//ovo ovde ne moze biti null, jer ovde dolazi samo ako je pod nadzorom, a to znaci da je morao uraditi test samoprocene vec
+			if(danPosle!=null)danPosle.add(GregorianCalendar.MINUTE, 1);//Pomeram za minut da bi mogao da pokazem funkcionalnost, u realnosti bi bilo npr. nedelju dana ili tako nesto
 			if(datumLogina.after(danPosle)) {
 				return true;
 			}else {
@@ -160,6 +235,10 @@ public class ClientHandler extends Thread{
 		
 	}
 
+	
+	
+	
+	
 	private int vratiBrojNovih(GregorianCalendar datumPrethodnogLogina) {
 		if(datumPrethodnogLogina==null)return 0;
 		int brojac=0;
@@ -235,7 +314,7 @@ public class ClientHandler extends Thread{
 	}
 
 	private void listaSvihKorisnika() {
-		String broj = String.valueOf(Server.listaRegistrovanih.size());
+		String broj =Server.listaRegistrovanih!=null ? String.valueOf(Server.listaRegistrovanih.size()):"0";//Menjao skoro
 		izlazniTok.println(broj);
 		for (KlijentPodaci k : Server.listaRegistrovanih) {
 			izlazniTok.println(k.imeIPrezime);
@@ -318,7 +397,7 @@ public class ClientHandler extends Thread{
 			 datumSamoProcene = (GregorianCalendar) ulazniZaObjekte.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("PROBLEM SAM CITANJEM OBJEKTA");
-			e.printStackTrace();
+//			e.printStackTrace();
 		} 
 		if(klijent.testSamoprocene==null)klijent.testSamoprocene = new TestSamoprocene(null, null,0);//mislim da ovo ovde nije neophodno
 		klijent.testSamoprocene.setDatum(datumSamoProcene);
@@ -330,15 +409,22 @@ public class ClientHandler extends Thread{
 		if(dalje.equals("jos testova")) {
 //			Server.statistika.povecajBrojTestiranja();
 //			azurirajStatistiku();
-			klijent.testSamoprocene.setStatus("dalje testiranje");
+			klijent.testSamoprocene.setStatus("dalje testiranje");// Ovde sam stavio dalje testiranje, da bih sklonio iz nadzora, podrazumevam da ce odraditi neki test(PCR ili brzi), sto znaci da je krenuo u dalja testiranja i da vise nije pod nadzorom
 			serijalizuj();// mora posle svake promene da se radi!
+//			boolean kraj =false;
+//			while(!kraj) {
 			String trecaOpcija =ulazniTok.readLine();
 			switch (trecaOpcija) {
 			case "1":
+//				if(!smeBrzi()) {
+//					break;
+//				}
 				brziTest();
+//				kraj=true;
 				break;
 			case "2":
 				PCRtest();
+//				kraj=true;
 				break;
 			case "3":
 				soketZaKomunikaciju.close();
@@ -348,10 +434,11 @@ public class ClientHandler extends Thread{
 				//break;
 			case "4":
 				obaTesta();
+//				kraj=true;
 				//PCR i brzi, videcu kako cu to
 				break;
 			}
-			
+			//}
 		}else {
 			if(klijent.testSamoprocene.getBrojac()%2==0) {// ako je taj prvi test, ide pod nadzor, ako je drugi, onda izlazi iz nadzora i vodi se kao negativan
 				//Ako oce opet da ulazi, onda opet ima priliku da udje pod nadzor
@@ -369,6 +456,23 @@ public class ClientHandler extends Thread{
 		}
 		return false;
 	}
+
+//	private boolean smeBrzi() {
+//	GregorianCalendar datumLogina = new GregorianCalendar();
+//	GregorianCalendar danPosle = klijent.brziTest.getDatum();
+//	// ako je ovo null, znaci da nije do sad radio test samoprocene i da sigurno moze da ga radi
+//	if(danPosle==null) {
+//		izlazniTok.println("sme");
+//		return true;
+//	}
+//	danPosle.add(GregorianCalendar.MINUTE, 1);//radi provere dodajem minut
+//	if(datumLogina.after(danPosle)) {
+//		izlazniTok.println("sme");
+//		return true;
+//	}
+//	izlazniTok.println("ne sme");
+//	return false;
+//	}
 
 //	private void azurirajStatistiku() {
 //		try(FileOutputStream fOut = new FileOutputStream("statistika.dat");
@@ -398,7 +502,7 @@ public class ClientHandler extends Thread{
 			 datumTesta = (GregorianCalendar) ulazniZaObjekte.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("Greska prilikom ucitavanja objekta");
-			e.printStackTrace();
+//			e.printStackTrace();
 		} 
 		//mislim da u ovom trenutku ne moze biti null jer sam ga napravio kako napravim klijenta, ali videcemo, ako pukne, stavis null proveru pa obradis nekako
 		klijent.pcrTest.setDatum(datumTesta);
@@ -449,8 +553,8 @@ public class ClientHandler extends Thread{
 		try {
 			 datumTesta = (GregorianCalendar) ulazniZaObjekte.readObject();
 		} catch (ClassNotFoundException e) {
-			System.out.println("Greska prilikom ucitvanja objekta");
-			e.printStackTrace();
+			System.out.println("Greska prilikom ucitavanja objekta");
+//			e.printStackTrace();
 		} 
 		//mislim da u ovom trenutku ne moze biti null jer sam ga napravio kako napravim klijenta, ali videcemo, ako pukne, stavis null proveru pa obradis nekako
 		klijent.brziTest.setDatum(datumTesta);
@@ -484,7 +588,7 @@ public class ClientHandler extends Thread{
 				
 			}catch (Exception e) {
 				System.out.println("Greska prilikom serijalizacije"+ e.getMessage());
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		
 	}
@@ -574,7 +678,7 @@ public class ClientHandler extends Thread{
 			
 		}catch (Exception e) {
 			System.out.println("Greska prilikom serijalizacije"+ e.getMessage());
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		
 	}

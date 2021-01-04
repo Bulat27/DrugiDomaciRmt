@@ -128,7 +128,7 @@ public class ClientHandler extends Thread{
 		GregorianCalendar datumLogina = new GregorianCalendar();
 		GregorianCalendar danPosle =(GregorianCalendar) klijent.testSamoprocene.getDatum().clone();
 		
-		danPosle.add(GregorianCalendar.MINUTE, 1);//radi provere dodajem minut
+		danPosle.add(GregorianCalendar.DAY_OF_MONTH, 1);//radi provere dodajem minut
 		if(datumLogina.after(danPosle)) {
 			izlazniTok.println("sme");
 			return true;
@@ -148,7 +148,7 @@ public class ClientHandler extends Thread{
 				if(k.testSamoprocene.getDatum()==null)continue;
 				GregorianCalendar minutPosle =(GregorianCalendar) k.testSamoprocene.getDatum().clone();
 //				if(minutPosle==null)continue;
-				minutPosle.add(GregorianCalendar.MINUTE, 1);
+				minutPosle.add(GregorianCalendar.DAY_OF_MONTH, 1);
 				if(k.trenutnoStanje.equals("pod nadzorom") && datumLogina.after(minutPosle)) {
 					izlazniTok.println(k.imeIPrezime);
 					izlazniTok.println(k.email);
@@ -169,7 +169,7 @@ public class ClientHandler extends Thread{
 			if(k.testSamoprocene.getDatum()==null)continue;
 			GregorianCalendar minutPosle =(GregorianCalendar) k.testSamoprocene.getDatum().clone();
 //			if(minutPosle==null)continue;
-			minutPosle.add(GregorianCalendar.MINUTE, 1);
+			minutPosle.add(GregorianCalendar.DAY_OF_MONTH, 1);
 			if(k.trenutnoStanje.equals("pod nadzorom") && datumLogina.after(minutPosle)) {
 				brojac++;
 			}
@@ -197,7 +197,7 @@ public class ClientHandler extends Thread{
 		try {
 			GregorianCalendar datumLogina = (GregorianCalendar) ulazniZaObjekte.readObject();
 			GregorianCalendar danPosle =(GregorianCalendar) klijent.testSamoprocene.getDatum().clone();//ovo ovde ne moze biti null, jer ovde dolazi samo ako je pod nadzorom, a to znaci da je morao uraditi test samoprocene vec
-			if(danPosle!=null)danPosle.add(GregorianCalendar.MINUTE, 1);//Pomeram za minut da bi mogao da pokazem funkcionalnost, u realnosti bi bilo npr. nedelju dana ili tako nesto
+			if(danPosle!=null)danPosle.add(GregorianCalendar.DAY_OF_MONTH, 1);//Pomeram za minut da bi mogao da pokazem funkcionalnost, u realnosti bi bilo npr. nedelju dana ili tako nesto
 			if(datumLogina.after(danPosle)) {
 				return true;
 			}else {
